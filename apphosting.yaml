@@ -4,3 +4,13 @@ runConfig:
   concurrency: 80
   cpu: 1
   memoryMiB: 512
+
+scripts:
+  buildCommand: npm run build
+  runCommand: npm start
+
+outputFiles:
+  serverApp:
+    include:
+      - dist
+      - server.mjs
