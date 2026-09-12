@@ -7,10 +7,12 @@ runConfig:
 
 scripts:
   buildCommand: npm run build
-  runCommand: npm start
+  runCommand: node server.mjs
 
 outputFiles:
   serverApp:
     include:
       - dist
       - server.mjs
+      - package.json
+      - node_modules
