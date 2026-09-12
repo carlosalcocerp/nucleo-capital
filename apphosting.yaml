@@ -16,3 +16,23 @@ outputFiles:
       - server.mjs
       - package.json
       - node_modules
+
+# Firebase environment variables for the build process
+# These are public keys (exposed to the browser by design), safe to store here.
+env:
+  - variable: VITE_FIREBASE_API_KEY
+    value: AIzaSyDIX7q2KgwyJDp9IfoStjP6DoHK5Eqzhrc
+  - variable: VITE_FIREBASE_AUTH_DOMAIN
+    value: nucleo-capital.firebaseapp.com
+  - variable: VITE_FIREBASE_DATABASE_URL
+    value: https://nucleo-capital-default-rtdb.firebaseio.com
+  - variable: VITE_FIREBASE_PROJECT_ID
+    value: nucleo-capital
+  - variable: VITE_FIREBASE_STORAGE_BUCKET
+    value: nucleo-capital.firebasestorage.app
+  - variable: VITE_FIREBASE_MESSAGING_SENDER_ID
+    value: "828474876054"
+  - variable: VITE_FIREBASE_APP_ID
+    value: "1:828474876054:web:72b7234e67f3eaebb862b7"
+  - variable: VITE_FIREBASE_MEASUREMENT_ID
+    value: G-PT20YQ0HH8
