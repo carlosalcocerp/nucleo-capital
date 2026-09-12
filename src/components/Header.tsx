@@ -7,11 +7,8 @@ const Header = () => {
 
   const navLinks = [
     { label: 'Inicio', href: '/' },
-    { label: 'Servicios', href: '/#servicios' },
     { label: 'Catálogo Merchandising', href: '/tienda' },
-    { label: 'Portafolio', href: '/#galeria' },
-    { label: 'Cotizador Online', href: '/#cotizador' },
-    { label: 'Contacto', href: '/#cotizador' },
+
   ];
 
   return (
