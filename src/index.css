@@ -63,19 +63,17 @@
   }
 }
 
-@keyframes brand-marquee {
-  0% { transform: translateX(0); opacity: 0; }
-  8% { opacity: 1; }
-  88% { opacity: 1; }
-  100% { transform: translateX(-50%); opacity: 0; }
+@keyframes typewriter-cursor-blink {
+  0%, 45% { opacity: 1; }
+  46%, 100% { opacity: 0; }
 }
 
-.brand-marquee {
-  animation: brand-marquee 22s linear infinite;
+.typewriter-cursor {
+  animation: typewriter-cursor-blink 0.9s step-end infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .brand-marquee {
+  .typewriter-cursor {
     animation: none;
   }
 }

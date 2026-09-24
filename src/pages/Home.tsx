@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import HeroAnimation from '../components/HeroAnimation';
+import TypewriterMessage from '../components/TypewriterMessage';
 
 const servicios = [
   {
@@ -56,22 +57,6 @@ const Home = () => {
       {/* HERO ANIMATION */}
       <HeroAnimation />
 
-      {/* MENSAJE ROTATIVO */}
-      <section className="w-full overflow-hidden bg-azul text-white border-y border-white/10" aria-label="Mensaje de marca">
-        <div className="brand-marquee flex w-max items-center whitespace-nowrap py-space-xs">
-          {[0, 1].map((group) => (
-            <div key={group} className="flex items-center">
-              {['Crea con intención', 'Diseña tu identidad', 'Destaca con propósito'].map((word) => (
-                <span key={`${group}-${word}`} className="flex items-center font-headline-md text-headline-md uppercase tracking-[0.16em] font-bold">
-                  <span className="px-space-lg text-title-lg">{word}</span>
-                  <span className="text-tertiary-fixed text-[16px]">+</span>
-                </span>
-              ))}
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* CATEGORIAS */}
       <section className="w-full bg-crema py-space-3xl overflow-hidden border-y border-outline-variant/50" id="categorias">
         <div className="max-w-[1280px] mx-auto px-gutter-mobile lg:px-gutter-desktop">
@@ -116,6 +101,8 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      <TypewriterMessage />
 
       {/* SERVICIOS ESPECIALIZADOS */}
       <section className="w-full py-space-3xl bg-surface-container-low border-y border-outline-variant/50" id="servicios">
