@@ -62,7 +62,6 @@ const Product = () => {
   const [selectedColor, setSelectedColor] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'specs' | 'craft' | 'shipping'>('specs');
-  const [logoFileName, setLogoFileName] = useState('');
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -231,15 +230,6 @@ const Product = () => {
                   </div>
                 </div>
               </div>
-
-              {/* 4. Logo Upload */}
-              <label className="p-space-md rounded-xl bg-surface-container-lowest border-2 border-dashed border-outline-variant hover:border-azul transition-all cursor-pointer text-center group block">
-                <input type="file" accept=".ai,.pdf,.svg,.png" className="hidden" onChange={(e) => { if (e.target.files?.[0]) setLogoFileName(e.target.files[0].name); }} />
-                <div className="flex flex-col items-center gap-1">
-                  <span className="material-symbols-outlined text-azul text-2xl group-hover:scale-110 transition-transform">cloud_upload</span>
-                  <span className="font-label-md text-label-md font-semibold text-azul">{logoFileName ? `✓ Archivo adjunto: ${logoFileName}` : 'Adjunta tu logotipo (AI, PDF, SVG, PNG)'}</span>
-                </div>
-              </label>
 
               {/* CTAs */}
               <div className="flex flex-col gap-space-xs">
