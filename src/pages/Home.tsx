@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import HeroAnimation from '../components/HeroAnimation';
-import TypewriterMessage from '../components/TypewriterMessage';
+import BrandMarquee from '../components/BrandMarquee';
 
 const servicios = [
   {
@@ -102,7 +102,7 @@ const Home = () => {
         </div>
       </section>
 
-      <TypewriterMessage />
+      <BrandMarquee />
 
       {/* SERVICIOS ESPECIALIZADOS */}
       <section className="w-full py-space-3xl bg-surface-container-low border-y border-outline-variant/50" id="servicios">
