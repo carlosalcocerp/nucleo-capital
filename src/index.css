@@ -32,3 +32,33 @@
     'GRAD' 0,
     'opsz' 24;
 }
+
+@keyframes whatsapp-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes whatsapp-icon-pulse {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.14) rotate(-8deg); }
+}
+
+.whatsapp-cta {
+  animation: whatsapp-bounce 1.8s ease-in-out infinite;
+}
+
+.whatsapp-cta__icon {
+  animation: whatsapp-icon-pulse 1.8s ease-in-out infinite;
+}
+
+.whatsapp-cta:active .whatsapp-cta__icon,
+.whatsapp-cta:hover .whatsapp-cta__icon {
+  animation: whatsapp-icon-pulse 0.55s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-cta,
+  .whatsapp-cta__icon {
+    animation: none;
+  }
+}

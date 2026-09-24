@@ -62,7 +62,6 @@ const Product = () => {
   const [selectedColor, setSelectedColor] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'specs' | 'craft' | 'shipping'>('specs');
-  const [showMockupModal, setShowMockupModal] = useState(false);
   const [logoFileName, setLogoFileName] = useState('');
 
   useEffect(() => {
@@ -239,18 +238,15 @@ const Product = () => {
                 <div className="flex flex-col items-center gap-1">
                   <span className="material-symbols-outlined text-azul text-2xl group-hover:scale-110 transition-transform">cloud_upload</span>
                   <span className="font-label-md text-label-md font-semibold text-azul">{logoFileName ? `✓ Archivo adjunto: ${logoFileName}` : 'Adjunta tu logotipo (AI, PDF, SVG, PNG)'}</span>
-                  <span className="font-label-sm text-[11px] text-outline">Para generar tu maqueta digital fotorrealista 3D sin costo</span>
                 </div>
               </label>
 
               {/* CTAs */}
               <div className="flex flex-col gap-space-xs">
-                <button onClick={() => setShowMockupModal(true)} className="w-full bg-azul text-white py-space-sm px-space-lg rounded-xl font-label-md text-label-md font-bold flex items-center justify-center gap-space-xs hover:bg-azul-dark transition-all shadow-sm">
-                  <span className="material-symbols-outlined text-xl">view_in_ar</span>
-                  Solicitar Mockup Digital 3D (En 2 Horas)
-                </button>
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="w-full bg-surface-container text-azul py-space-sm px-space-lg rounded-xl font-label-md text-label-md font-semibold flex items-center justify-center gap-space-xs hover:bg-surface-container-high transition-all border border-outline-variant/30">
-                  <span className="material-symbols-outlined text-xl">chat</span>
+                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="whatsapp-cta w-full bg-[#25D366] text-white py-space-sm px-space-lg rounded-xl font-label-md text-label-md font-bold flex items-center justify-center gap-space-xs hover:bg-[#20bd5a] transition-all border border-[#1da851] shadow-md hover:shadow-lg active:scale-95">
+                  <svg className="whatsapp-cta__icon h-6 w-6" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+                    <path d="M20.52 3.48A11.86 11.86 0 0 0 12.08 0C5.53 0 .2 5.33.2 11.88c0 2.09.55 4.13 1.59 5.92L.1 24l6.34-1.66a11.87 11.87 0 0 0 5.64 1.43h.01c6.55 0 11.88-5.33 11.88-11.88 0-3.18-1.24-6.16-3.45-8.41Zm-8.44 18.27h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.76.99 1-3.67-.23-.38a9.87 9.87 0 0 1-1.51-5.22C2.18 6.43 6.62 2 12.08 2a9.83 9.83 0 0 1 7 2.9 9.86 9.86 0 0 1 2.9 7.01c0 5.46-4.44 9.89-9.9 9.89Zm5.42-7.4c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.01-1.04 2.47s1.07 2.86 1.22 3.06c.15.2 2.1 3.21 5.08 4.5.71.31 1.26.49 1.69.63.71.23 1.35.2 1.86.12.57-.08 1.77-.72 2.02-1.41.25-.69.25-1.28.17-1.41-.07-.12-.27-.2-.57-.35Z" />
+                  </svg>
                   Cotizar Directo por WhatsApp
                 </a>
               </div>
@@ -397,49 +393,6 @@ const Product = () => {
         </div>
       </div>
 
-      {/* MOCKUP MODAL */}
-      {showMockupModal && (
-        <div className="fixed inset-0 z-50 bg-azul/60 backdrop-blur-sm flex items-center justify-center p-space-md">
-          <div className="bg-surface-container-lowest rounded-2xl max-w-lg w-full p-space-xl shadow-2xl relative flex flex-col gap-space-md">
-            <button onClick={() => setShowMockupModal(false)} className="absolute top-space-md right-space-md text-outline hover:text-azul">
-              <span className="material-symbols-outlined text-2xl">close</span>
-            </button>
-            <div className="flex items-center gap-space-xs">
-              <div className="w-10 h-10 rounded-xl bg-azul/10 text-azul flex items-center justify-center">
-                <span className="material-symbols-outlined text-xl">view_in_ar</span>
-              </div>
-              <div>
-                <h3 className="font-title-lg text-title-lg text-azul font-bold">Solicitar Mockup 3D Gratuito</h3>
-                <span className="font-label-sm text-label-sm text-azul">Diseño en 3D listo en menos de 2 horas hábiles</span>
-              </div>
-            </div>
-            <form onSubmit={(e) => { e.preventDefault(); alert('¡Solicitud enviada! Te contactaremos en menos de 2 horas.'); setShowMockupModal(false); }} className="flex flex-col gap-space-sm">
-              <div>
-                <label className="block font-label-sm text-label-sm text-azul font-semibold mb-1">Nombre y Apellido</label>
-                <input className="w-full bg-surface-container-low p-2.5 rounded-lg text-body-md text-azul focus:outline-none focus:ring-1 focus:ring-azul" placeholder="Ej. Carlos Ramos" required />
-              </div>
-              <div>
-                <label className="block font-label-sm text-label-sm text-azul font-semibold mb-1">Empresa o Institución</label>
-                <input className="w-full bg-surface-container-low p-2.5 rounded-lg text-body-md text-azul focus:outline-none focus:ring-1 focus:ring-azul" placeholder="Ej. Corporación Minera del Sur S.A.A." required />
-              </div>
-              <div className="grid grid-cols-2 gap-space-sm">
-                <div>
-                  <label className="block font-label-sm text-label-sm text-azul font-semibold mb-1">Correo Corporativo</label>
-                  <input type="email" className="w-full bg-surface-container-low p-2.5 rounded-lg text-body-md text-azul focus:outline-none focus:ring-1 focus:ring-azul" placeholder="compras@empresa.pe" required />
-                </div>
-                <div>
-                  <label className="block font-label-sm text-label-sm text-azul font-semibold mb-1">WhatsApp</label>
-                  <input type="tel" className="w-full bg-surface-container-low p-2.5 rounded-lg text-body-md text-azul focus:outline-none focus:ring-1 focus:ring-azul" placeholder="+51 983 033 938" required />
-                </div>
-              </div>
-              <button type="submit" className="w-full bg-azul text-white py-space-sm rounded-xl font-label-md text-label-md font-bold flex items-center justify-center gap-2 hover:bg-azul-dark transition-all">
-                <span className="material-symbols-outlined text-lg">send</span>
-                Generar y Enviar a mi WhatsApp
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
