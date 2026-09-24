@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import HeroAnimation from '../components/HeroAnimation';
@@ -33,11 +34,88 @@ const servicios = [
   },
 ];
 
+const categorias = [
+  { name: 'Artículos de Escritorio', icon: 'desk', detail: 'Soluciones para oficinas que cuidan cada detalle.' },
+  { name: 'Artículos Médicos y Laboratorio - Antistress', icon: 'medical_services', detail: 'Obsequios funcionales para equipos y jornadas exigentes.' },
+  { name: 'Espejos - Llaveros - Winchas', icon: 'key', detail: 'Accesorios promocionales para llevar tu marca siempre.' },
+  { name: 'Lapiceros Ecológicos', icon: 'eco', detail: 'Alternativas responsables para comunicar tus valores.' },
+  { name: 'Lapiceros Metálicos', icon: 'edit', detail: 'Escritura ejecutiva con acabados premium.' },
+  { name: 'Lapiceros Plásticos', icon: 'ink_pen', detail: 'Clásicos versátiles para campañas de alto alcance.' },
+  { name: 'Libretas - Posits', icon: 'menu_book', detail: 'Ideas, reuniones y objetivos en un solo lugar.' },
+  { name: 'Novedades', icon: 'auto_awesome', detail: 'Lo último para sorprender a tus clientes y equipos.' },
+  { name: 'Sets', icon: 'redeem', detail: 'Combinaciones listas para regalar con intención.' },
+  { name: 'Tomatodos - MUG', icon: 'local_drink', detail: 'Hidratación diaria convertida en presencia de marca.' },
+  { name: "USB's - Accesorios de Celular", icon: 'devices', detail: 'Tecnología útil para acompañar el trabajo diario.' },
+];
+
 const Home = () => {
+  const [activeCategory, setActiveCategory] = useState(0);
+
   return (
     <div className="flex flex-col w-full">
       {/* HERO ANIMATION */}
       <HeroAnimation />
+
+      {/* MENSAJE ROTATIVO */}
+      <section className="w-full overflow-hidden bg-azul text-white border-y border-white/10" aria-label="Mensaje de marca">
+        <div className="brand-marquee flex w-max items-center whitespace-nowrap py-space-md">
+          {[0, 1].map((group) => (
+            <div key={group} className="flex items-center">
+              {['Crea', 'Diseña', 'Destaca'].map((word) => (
+                <span key={`${group}-${word}`} className="flex items-center font-headline-md text-headline-md uppercase tracking-[0.16em] font-bold">
+                  <span className="px-space-xl">{word}</span>
+                  <span className="text-tertiary-fixed text-[20px]">+</span>
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CATEGORIAS */}
+      <section className="w-full bg-[#e8b8a4] py-space-3xl overflow-hidden" id="categorias">
+        <div className="max-w-[1280px] mx-auto px-gutter-mobile lg:px-gutter-desktop">
+          <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-space-2xl lg:gap-space-3xl">
+            <div className="flex flex-col justify-between gap-space-xl">
+              <div>
+                <span className="font-label-sm text-label-sm text-azul uppercase tracking-[0.18em] font-bold">Explora nuestra selección</span>
+                <h2 className="font-headline-lg text-headline-lg text-azul uppercase tracking-tight mt-space-sm max-w-xl">
+                  Encuentra el producto que necesitas
+                </h2>
+              </div>
+              <div className="max-w-sm">
+                <div className="flex items-center gap-space-xs text-azul mb-space-sm">
+                  <span className="material-symbols-outlined text-[20px]">arrow_downward</span>
+                  <span className="font-label-sm text-label-sm uppercase tracking-widest font-bold">Categoría destacada</span>
+                </div>
+                <p className="font-body-md text-body-md text-[#3f302c] min-h-[44px]">{categorias[activeCategory].detail}</p>
+                <Link to="/tienda" className="mt-space-lg inline-flex items-center gap-space-sm bg-azul text-white px-space-lg py-space-sm rounded-full font-label-md text-label-md font-bold hover:bg-azul-dark transition-all group">
+                  Ver todo el catálogo
+                  <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </Link>
+              </div>
+            </div>
+
+            <div className="lg:border-l lg:border-[#3f302c]/25 lg:pl-space-2xl">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-space-xl">
+                {categorias.map((categoria, index) => (
+                  <button
+                    key={categoria.name}
+                    type="button"
+                    onClick={() => setActiveCategory(index)}
+                    onMouseEnter={() => setActiveCategory(index)}
+                    className={`group flex items-center gap-space-sm text-left py-space-md border-b border-[#3f302c]/20 transition-all ${activeCategory === index ? 'text-azul' : 'text-[#3f302c] hover:text-azul'}`}
+                  >
+                    <span className={`material-symbols-outlined text-[21px] transition-transform ${activeCategory === index ? 'scale-110' : 'group-hover:scale-110'}`}>{categoria.icon}</span>
+                    <span className="font-title-lg text-title-lg font-bold leading-tight flex-1">{categoria.name}</span>
+                    <span className={`material-symbols-outlined text-[18px] transition-all ${activeCategory === index ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0'}`}>north_east</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* SERVICIOS ESPECIALIZADOS */}
       <section className="w-full py-space-3xl bg-surface-container-low border-y border-outline-variant/50" id="servicios">
