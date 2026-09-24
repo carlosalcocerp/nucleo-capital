@@ -76,6 +76,7 @@
 .brand-marquee__track {
   display: flex;
   width: max-content;
+  will-change: transform;
   animation: brand-marquee 24s linear infinite;
 }
 
