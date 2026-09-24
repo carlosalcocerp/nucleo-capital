@@ -5,6 +5,20 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { Producto } from '../types/product';
 
+const PRODUCT_CATEGORIES = [
+  'Artículos de Escritorio',
+  'Artículos Médicos y Laboratorio - Antistress',
+  'Espejos - Llaveros - Winchas',
+  'Lapiceros Ecológicos',
+  'Lapiceros Metálicos',
+  'Lapiceros Plásticos',
+  'Libretas - Posits',
+  'Novedades',
+  'Sets',
+  'Tomatodos - MUG',
+  "USB's - Accesorios de Celular",
+] as const;
+
 const colorMap: Record<string, string> = {
   'Negro Mate': 'bg-[#1A1A1A]',
   'Esmeralda': 'bg-[#003220]',
@@ -35,7 +49,6 @@ const Store = () => {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [activePrice, setActivePrice] = useState(-1);
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
@@ -56,24 +69,20 @@ const Store = () => {
             id: doc.id,
             nombre: data.nombre,
             descripcion: data.descripcion,
-            precio: data.precio,
             imagen: data.imagen,
             categoria: data.categoria,
             tipo: data.tipo,
-            stock: data.stock,
             activo: data.activo,
             fechaCreacion: data.fechaCreacion?.toDate() || new Date(),
-            moq: data.moq || 25,
-            tecnica: data.tecnica || '',
             colores: data.colores || [],
             material: data.material || '',
             capacidad: data.capacidad,
             badge: data.badge,
           });
         });
-        // Ordenar por fecha de creación (más recientes primero)
+        // Solo se publican productos pertenecientes a las categorías autorizadas.
         products.sort((a, b) => b.fechaCreacion.getTime() - a.fechaCreacion.getTime());
-        setProductos(products);
+        setProductos(products.filter((product) => PRODUCT_CATEGORIES.includes(product.categoria as typeof PRODUCT_CATEGORIES[number])));
       } catch (error) {
         console.error('Error al cargar productos:', error);
       } finally {
@@ -84,8 +93,7 @@ const Store = () => {
   }, []);
 
   const categories = useMemo(() => {
-    const cats = [...new Set(productos.map((p) => p.categoria))];
-    return cats.map((c) => ({
+    return PRODUCT_CATEGORIES.map((c) => ({
       name: c,
       count: productos.filter((p) => p.categoria === c).length,
     }));
@@ -128,20 +136,15 @@ const Store = () => {
     setSelectedTypes([]);
     setSelectedColors([]);
     setSearchTerm('');
-    setActivePrice(-1);
   };
 
-  const hasActiveFilters = selectedCategories.length > 0 || selectedTypes.length > 0 || selectedColors.length > 0 || searchTerm || activePrice >= 0;
+  const hasActiveFilters = selectedCategories.length > 0 || selectedTypes.length > 0 || selectedColors.length > 0 || searchTerm;
 
   const filteredProducts = productos.filter((p) => {
     if (selectedCategories.length > 0 && !selectedCategories.includes(p.categoria)) return false;
     if (selectedTypes.length > 0 && !selectedTypes.includes(p.tipo)) return false;
     if (selectedColors.length > 0 && !p.colores.some((c) => selectedColors.includes(c))) return false;
     if (searchTerm && !p.nombre.toLowerCase().includes(searchTerm.toLowerCase()) && !p.descripcion.toLowerCase().includes(searchTerm.toLowerCase())) return false;
-    if (activePrice === 0 && p.precio >= 20) return false;
-    if (activePrice === 1 && (p.precio < 20 || p.precio >= 50)) return false;
-    if (activePrice === 2 && (p.precio < 50 || p.precio >= 100)) return false;
-    if (activePrice === 3 && p.precio < 100) return false;
     return true;
   });
 
@@ -369,10 +372,6 @@ const Store = () => {
                             {producto.badge}
                           </span>
                         )}
-                        <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm text-azul font-label-sm text-label-sm px-2 py-1 rounded-lg shadow-sm flex items-center gap-1 font-semibold">
-                          <span className="material-symbols-outlined text-xs">inventory_2</span>
-                          MOQ: {producto.moq}u
-                        </div>
                       </div>
                       <div className="p-space-md flex flex-col gap-space-xs">
                         <div className="flex items-center justify-between">
@@ -382,7 +381,6 @@ const Store = () => {
                         <h3 className="font-title-lg text-title-lg text-azul group-hover:text-azul-dark transition-colors leading-snug">{producto.nombre}</h3>
                         <p className="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">{producto.descripcion}</p>
                         <div className="flex items-center gap-1 flex-wrap">
-                          <span className="bg-surface-container text-azul font-label-sm text-[10px] px-1.5 py-0.5 rounded">{producto.tecnica}</span>
                           {producto.colores.length > 0 && (
                             <div className="flex items-center gap-0.5 ml-auto">
                               {producto.colores.slice(0, 3).map((c, i) => (

@@ -28,55 +28,29 @@ const colorMap: Record<string, string> = {
   'Bambú Natural': 'bg-[#C4A35A]',
 };
 
-const techniques = [
-  {
-    id: 'laser',
-    name: 'Grabado Láser Fibra Óptica 360°',
-    desc: 'Indeleble, precisión milimétrica, acabado plateado pulido',
-    surcharge: 0,
-    recommended: true,
-  },
-  {
-    id: 'serigrafia',
-    name: 'Serigrafía Rotativa al Horno',
-    desc: 'Color corporativo Pantone exacto con fijación térmica',
-    surcharge: 1.5,
-  },
-  {
-    id: 'tampografia',
-    name: 'Tampografía HD en Tapa / Base',
-    desc: 'Ideal para monogramas o sellos circulares secundarios',
-    surcharge: 0.8,
-  },
-];
-
 const crossSellProducts = [
   {
     name: 'Cuaderno Smart Bamboo A5',
     section: 'Papelería Premium',
     desc: 'Hojas ecológicas y tapa dura con placa metálica',
-    price: 'S/ 18.50',
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDURcfMIVqLuoM5De7hOAKtCQcUCw_hiwake6R3JyBzmFHu7H5-Bv33-RoHm0qyvrD3iAjlMj8UqkskNS7OkiwzQ2GTY399Ib7K7o8KT_NXbGB4nYID64IJA4lzVgvQF616jL6BLYpix3ES06ejK5xAXGyDDpQ8LQGPK4knloHeZUwAWLUaooUqrVk5yxKikkMYEZD2-JQm_YaH_DPfVBH1eiGb-0SnHr7SW_Dp0bqELHA0-Y4FuALqeQ',
   },
   {
     name: 'Caja Box Imantada de Lujo',
     section: 'Presentación de Lujo',
     desc: 'Espuma troquelada a medida y stamping metálico',
-    price: 'S/ 32.00',
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCe6Lc-DUXMKVKOWC9fJXE7xt2L4QPSmL3vn42peDulVjxTVfPzby6litV2FPvnOlg_gnB0RkFRrnGWFJoLv_SUEoMXXiMLwD8OYqo3vC46liXzqRap3sn1Lw7narQyZCr6m9hSTLpKCl2in34ZPl3j5F_XpcrauD05e1jjL8lKI-C4aeM5Fyg5mVoqdHEgKtRPgnf2FhoxDklnF0Z_tIaQVDZ0YQCt7pFDe-zanHmDIJtgwGeD84wjCA',
   },
   {
     name: 'Bolígrafo Rollerball Metal',
     section: 'Escritura Ejecutiva',
     desc: 'Tinta gel alemana de trazo ultra suave y peso balanceado',
-    price: 'S/ 6.90',
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB6mVOXtDzPPRY58q0ZG8AF5bw59HlWyhxAI_EqjY4p7NKjrZsLQzxe0GAPLH-pCaAl_Ti02TcuEYsrQ1GV5OrKwmFj_bJcpmDLBDXFh4tpnfHCKaD-i5_49NUas8BauwUo7BiozecJhRv1yMYQAVI4ozwrmyUOc04i3xpeTy91UrNCvx-v6GwtyL07EG3MNE-3ibzDmlJzbXkYzTRics1D4oT23XV67n9Tp9eb_rlmq7_zxW_R611g7Q',
   },
   {
     name: 'Mochila Porta Laptop Cóndor',
     section: 'Textil & Transporte',
     desc: 'Polyester balístico hidrófugo con puerto USB integrado',
-    price: 'S/ 89.00',
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAtKVF4Q1KpYV1dcC-7aUtw3leDVBfm2GS5iRT8llw0VepYLY-BTO51aD4WOncTcf8vtYwlXUn6DxlnMoeQn0RLUM36AeC23bPvqlHzDZRojdlgsOLNDoGDvNYIGereFz-zofFDANiiKNCpYOPafbVlrHwAXQdEKzu9IvlbkmNp3S6i2DX7cUXi2aPfD0kwgV7tBtmaiZXQKfO0e4QP0sZFw8OAUQPIuj2XJOcnAQnUGMoYcgJFanBQZg',
   },
 ];
@@ -86,8 +60,7 @@ const Product = () => {
   const [producto, setProducto] = useState<Producto | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedColor, setSelectedColor] = useState(0);
-  const [selectedTechnique, setSelectedTechnique] = useState(0);
-  const [quantity, setQuantity] = useState(100);
+  const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'specs' | 'craft' | 'shipping'>('specs');
   const [showMockupModal, setShowMockupModal] = useState(false);
   const [logoFileName, setLogoFileName] = useState('');
@@ -104,15 +77,11 @@ const Product = () => {
             id: docSnap.id,
             nombre: data.nombre,
             descripcion: data.descripcion,
-            precio: data.precio,
             imagen: data.imagen,
             categoria: data.categoria,
             tipo: data.tipo,
-            stock: data.stock,
             activo: data.activo,
             fechaCreacion: data.fechaCreacion?.toDate() || new Date(),
-            moq: data.moq || 25,
-            tecnica: data.tecnica || '',
             colores: data.colores || [],
             material: data.material || '',
             capacidad: data.capacidad,
@@ -131,17 +100,6 @@ const Product = () => {
     };
     fetchProduct();
   }, [id]);
-
-  const getUnitPrice = () => {
-    const surcharge = techniques[selectedTechnique].surcharge;
-    let base = producto?.precio || 29;
-    if (quantity >= 250) base = base * 0.89;
-    else if (quantity >= 100) base = base * 0.95;
-    else if (quantity >= 50) base = base * 0.97;
-    return base + surcharge;
-  };
-
-  const getTotalPrice = () => getUnitPrice() * quantity;
 
   if (loading) {
     return (
@@ -169,7 +127,7 @@ const Product = () => {
     );
   }
 
-  const whatsappMsg = `Hola Núcleo Capital Arequipa, deseo cotizar formalmente ${quantity} unidades del ${producto.nombre} en color ${producto.colores[selectedColor] || 'estándar'}. Monto estimado: S/ ${getTotalPrice().toFixed(2)} + IGV.`;
+  const whatsappMsg = `Hola Núcleo Capital Arequipa, deseo cotizar formalmente ${quantity} unidades del ${producto.nombre} en color ${producto.colores[selectedColor] || 'estándar'}.`;
   const whatsappUrl = `https://wa.me/51983033938?text=${encodeURIComponent(whatsappMsg)}`;
 
   return (
@@ -202,10 +160,6 @@ const Product = () => {
               </div>
               <div className="relative w-full aspect-[4/3] bg-surface-container-low flex items-center justify-center overflow-hidden">
                 <img src={producto.imagen} alt={producto.nombre} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                <div className="absolute bottom-space-md left-space-md bg-azul/85 backdrop-blur-md text-white px-space-md py-1.5 rounded-lg flex items-center gap-space-xs font-label-sm text-label-sm">
-                  <span className="material-symbols-outlined text-tertiary-fixed text-sm">precision_manufacturing</span>
-                  {producto.tecnica} - {producto.material}
-                </div>
               </div>
             </div>
 
@@ -216,7 +170,7 @@ const Product = () => {
               </div>
               <div className="flex-1 text-center sm:text-left">
                 <h2 className="font-title-lg text-title-lg text-azul">Garantía Directa de Taller en Yanahuara</h2>
-                <p className="font-body-md text-body-md text-on-surface-variant">Generamos tu mockup 3D fotorrealista con tu logo en menos de 2 horas. Muestra física previa disponible para órdenes corporativas a partir de {producto.moq} unidades.</p>
+                <p className="font-body-md text-body-md text-on-surface-variant">Generamos tu mockup 3D fotorrealista con tu logo en menos de 2 horas. Solicita una muestra física previa para tu orden corporativa.</p>
               </div>
               <span className="inline-flex items-center gap-1 bg-surface-container-low text-azul font-label-sm text-label-sm px-space-sm py-1 rounded-full font-semibold shrink-0">
                 <span className="material-symbols-outlined text-xs">timer</span>
@@ -267,52 +221,14 @@ const Product = () => {
                 </div>
               )}
 
-              {/* 2. Technique */}
-              <div>
-                <div className="flex items-center justify-between mb-space-xs">
-                  <span className="font-title-lg text-title-lg text-azul text-sm font-semibold">2. Técnica de Personalizado:</span>
-                  <span className="font-label-sm text-label-sm text-outline">Incluye calibración CNC</span>
-                </div>
-                <div className="flex flex-col gap-space-xs">
-                  {techniques.map((t, i) => (
-                    <label key={t.id} onClick={() => setSelectedTechnique(i)} className={`cursor-pointer p-space-sm rounded-lg transition-all flex items-center justify-between ${selectedTechnique === i ? 'bg-azul text-white' : 'bg-surface-container-low hover:bg-surface-container'}`}>
-                      <div className="flex items-center gap-space-xs">
-                        <input type="radio" name="technique" checked={selectedTechnique === i} readOnly className="accent-azul h-4 w-4" />
-                        <div>
-                          <div className={`font-label-md text-label-md font-semibold flex items-center gap-1 ${selectedTechnique === i ? '' : 'text-azul'}`}>
-                            {t.name}
-                            {t.recommended && <span className="bg-tertiary-fixed text-tertiary font-label-sm text-[10px] px-1.5 py-0.2 rounded font-bold">Recomendado</span>}
-                          </div>
-                          <p className={`font-label-sm text-[11px] ${selectedTechnique === i ? 'opacity-80' : 'text-on-surface-variant'}`}>{t.desc}</p>
-                        </div>
-                      </div>
-                      <span className={`font-label-sm text-label-sm font-bold shrink-0 ${selectedTechnique === i ? '' : 'text-azul'}`}>{t.surcharge === 0 ? 'Incluido' : `+ S/ ${t.surcharge.toFixed(2)} c/u`}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* 3. Quantity */}
+              {/* Quantity */}
               <div className="bg-surface-container-low p-space-md rounded-xl flex flex-col gap-space-sm">
                 <div className="flex items-center justify-between">
                   <span className="font-label-md text-label-md font-semibold text-azul">Cantidad de unidades:</span>
                   <div className="flex items-center bg-surface-container-lowest rounded-lg shadow-sm overflow-hidden">
-                    <button onClick={() => setQuantity(Math.max(producto.moq, quantity - 25))} className="w-8 h-8 flex items-center justify-center hover:bg-surface-container transition-colors text-azul font-bold text-lg">−</button>
-                    <input type="number" value={quantity} onChange={(e) => setQuantity(Math.max(producto.moq, parseInt(e.target.value) || producto.moq))} min={producto.moq} step={25} className="w-16 text-center font-bold text-azul text-body-md bg-transparent focus:outline-none" />
+                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-8 h-8 flex items-center justify-center hover:bg-surface-container transition-colors text-azul font-bold text-lg">−</button>
+                    <input type="number" value={quantity} onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))} min={1} className="w-16 text-center font-bold text-azul text-body-md bg-transparent focus:outline-none" />
                     <button onClick={() => setQuantity(quantity + 25)} className="w-8 h-8 flex items-center justify-center hover:bg-surface-container transition-colors text-azul font-bold text-lg">+</button>
-                  </div>
-                </div>
-                <div className="pt-space-xs border-t border-outline-variant/30 flex flex-col gap-1">
-                  <div className="flex justify-between font-label-sm text-on-surface-variant">
-                    <span>Precio Unitario Estimado:</span>
-                    <span className="font-semibold text-azul">S/ {getUnitPrice().toFixed(2)} c/u</span>
-                  </div>
-                  <div className="flex justify-between items-baseline pt-1">
-                    <span className="font-title-lg text-title-lg text-azul">Total Presupuestado:</span>
-                    <div className="text-right">
-                      <span className="font-headline-sm text-headline-sm text-azul font-bold">S/ {getTotalPrice().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                      <span className="block font-label-sm text-[11px] text-outline">+ IGV Facturado | Envío Taller AQP</span>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -378,14 +294,6 @@ const Product = () => {
                 <div className="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-1">
                   <span className="font-label-sm text-label-sm text-outline uppercase font-semibold">Material</span>
                   <span className="font-title-lg text-title-lg text-azul font-bold">{producto.material}</span>
-                </div>
-                <div className="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-1">
-                  <span className="font-label-sm text-label-sm text-outline uppercase font-semibold">Técnica</span>
-                  <span className="font-title-lg text-title-lg text-azul font-bold">{producto.tecnica}</span>
-                </div>
-                <div className="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-1">
-                  <span className="font-label-sm text-label-sm text-outline uppercase font-semibold">MOQ</span>
-                  <span className="font-title-lg text-title-lg text-azul font-bold">{producto.moq} unidades</span>
                 </div>
                 {producto.capacidad && (
                   <div className="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-1">
@@ -465,7 +373,6 @@ const Product = () => {
                   <h4 className="font-title-lg text-title-lg text-azul text-base">{p.name}</h4>
                   <p className="font-label-sm text-on-surface-variant text-[12px] mb-2">{p.desc}</p>
                   <div className="flex items-baseline justify-between pt-space-xs border-t border-outline-variant/30">
-                    <span className="font-bold text-azul">{p.price} <span className="text-[11px] font-normal text-outline">/ud</span></span>
                     <button className="text-azul hover:text-azul-dark font-label-sm text-label-sm font-semibold flex items-center gap-0.5">
                       <span className="material-symbols-outlined text-sm">add_circle</span> Añadir al Pack
                     </button>
