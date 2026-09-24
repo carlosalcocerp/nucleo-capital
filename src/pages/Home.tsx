@@ -58,13 +58,13 @@ const Home = () => {
 
       {/* MENSAJE ROTATIVO */}
       <section className="w-full overflow-hidden bg-azul text-white border-y border-white/10" aria-label="Mensaje de marca">
-        <div className="brand-marquee flex w-max items-center whitespace-nowrap py-space-md">
+        <div className="brand-marquee flex w-max items-center whitespace-nowrap py-space-xs">
           {[0, 1].map((group) => (
             <div key={group} className="flex items-center">
               {['Crea', 'Diseña', 'Destaca'].map((word) => (
                 <span key={`${group}-${word}`} className="flex items-center font-headline-md text-headline-md uppercase tracking-[0.16em] font-bold">
-                  <span className="px-space-xl">{word}</span>
-                  <span className="text-tertiary-fixed text-[20px]">+</span>
+                  <span className="px-space-lg text-title-lg">{word}</span>
+                  <span className="text-tertiary-fixed text-[16px]">+</span>
                 </span>
               ))}
             </div>
@@ -73,7 +73,7 @@ const Home = () => {
       </section>
 
       {/* CATEGORIAS */}
-      <section className="w-full bg-[#e8b8a4] py-space-3xl overflow-hidden" id="categorias">
+      <section className="w-full bg-crema py-space-3xl overflow-hidden border-y border-outline-variant/50" id="categorias">
         <div className="max-w-[1280px] mx-auto px-gutter-mobile lg:px-gutter-desktop">
           <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-space-2xl lg:gap-space-3xl">
             <div className="flex flex-col justify-between gap-space-xl">
@@ -88,7 +88,7 @@ const Home = () => {
                   <span className="material-symbols-outlined text-[20px]">arrow_downward</span>
                   <span className="font-label-sm text-label-sm uppercase tracking-widest font-bold">Categoría destacada</span>
                 </div>
-                <p className="font-body-md text-body-md text-[#3f302c] min-h-[44px]">{categorias[activeCategory].detail}</p>
+                <p className="font-body-md text-body-md text-on-surface-variant min-h-[44px]">{categorias[activeCategory].detail}</p>
                 <Link to="/tienda" className="mt-space-lg inline-flex items-center gap-space-sm bg-azul text-white px-space-lg py-space-sm rounded-full font-label-md text-label-md font-bold hover:bg-azul-dark transition-all group">
                   Ver todo el catálogo
                   <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -96,7 +96,7 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="lg:border-l lg:border-[#3f302c]/25 lg:pl-space-2xl">
+            <div className="lg:border-l lg:border-outline-variant lg:pl-space-2xl">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-space-xl">
                 {categorias.map((categoria, index) => (
                   <button
@@ -104,7 +104,7 @@ const Home = () => {
                     type="button"
                     onClick={() => setActiveCategory(index)}
                     onMouseEnter={() => setActiveCategory(index)}
-                    className={`group flex items-center gap-space-sm text-left py-space-md border-b border-[#3f302c]/20 transition-all ${activeCategory === index ? 'text-azul' : 'text-[#3f302c] hover:text-azul'}`}
+                    className={`group flex items-center gap-space-sm text-left py-space-md border-b border-outline-variant/70 transition-all ${activeCategory === index ? 'text-azul' : 'text-on-surface-variant hover:text-azul'}`}
                   >
                     <span className={`material-symbols-outlined text-[21px] transition-transform ${activeCategory === index ? 'scale-110' : 'group-hover:scale-110'}`}>{categoria.icon}</span>
                     <span className="font-title-lg text-title-lg font-bold leading-tight flex-1">{categoria.name}</span>

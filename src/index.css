@@ -69,7 +69,7 @@
 }
 
 .brand-marquee {
-  animation: brand-marquee 22s linear infinite;
+  animation: brand-marquee 18s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
