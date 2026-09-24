@@ -64,12 +64,14 @@
 }
 
 @keyframes brand-marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  0% { transform: translateX(0); opacity: 0; }
+  8% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateX(-50%); opacity: 0; }
 }
 
 .brand-marquee {
-  animation: brand-marquee 18s linear infinite;
+  animation: brand-marquee 22s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

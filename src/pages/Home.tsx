@@ -61,7 +61,7 @@ const Home = () => {
         <div className="brand-marquee flex w-max items-center whitespace-nowrap py-space-xs">
           {[0, 1].map((group) => (
             <div key={group} className="flex items-center">
-              {['Crea', 'Diseña', 'Destaca'].map((word) => (
+              {['Crea con intención', 'Diseña tu identidad', 'Destaca con propósito'].map((word) => (
                 <span key={`${group}-${word}`} className="flex items-center font-headline-md text-headline-md uppercase tracking-[0.16em] font-bold">
                   <span className="px-space-lg text-title-lg">{word}</span>
                   <span className="text-tertiary-fixed text-[16px]">+</span>
