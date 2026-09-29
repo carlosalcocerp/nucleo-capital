@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { mockProducts } from '../data/mockProducts';
 import type { Producto } from '../types/product';
 
 const colorMap: Record<string, string> = {
@@ -28,32 +29,11 @@ const colorMap: Record<string, string> = {
   'Bambú Natural': 'bg-[#C4A35A]',
 };
 
-const crossSellProducts = [
-  {
-    name: 'Cuaderno Smart Bamboo A5',
-    section: 'Papelería Premium',
-    desc: 'Hojas ecológicas y tapa dura con placa metálica',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDURcfMIVqLuoM5De7hOAKtCQcUCw_hiwake6R3JyBzmFHu7H5-Bv33-RoHm0qyvrD3iAjlMj8UqkskNS7OkiwzQ2GTY399Ib7K7o8KT_NXbGB4nYID64IJA4lzVgvQF616jL6BLYpix3ES06ejK5xAXGyDDpQ8LQGPK4knloHeZUwAWLUaooUqrVk5yxKikkMYEZD2-JQm_YaH_DPfVBH1eiGb-0SnHr7SW_Dp0bqELHA0-Y4FuALqeQ',
-  },
-  {
-    name: 'Caja Box Imantada de Lujo',
-    section: 'Presentación de Lujo',
-    desc: 'Espuma troquelada a medida y stamping metálico',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCe6Lc-DUXMKVKOWC9fJXE7xt2L4QPSmL3vn42peDulVjxTVfPzby6litV2FPvnOlg_gnB0RkFRrnGWFJoLv_SUEoMXXiMLwD8OYqo3vC46liXzqRap3sn1Lw7narQyZCr6m9hSTLpKCl2in34ZPl3j5F_XpcrauD05e1jjL8lKI-C4aeM5Fyg5mVoqdHEgKtRPgnf2FhoxDklnF0Z_tIaQVDZ0YQCt7pFDe-zanHmDIJtgwGeD84wjCA',
-  },
-  {
-    name: 'Bolígrafo Rollerball Metal',
-    section: 'Escritura Ejecutiva',
-    desc: 'Tinta gel alemana de trazo ultra suave y peso balanceado',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB6mVOXtDzPPRY58q0ZG8AF5bw59HlWyhxAI_EqjY4p7NKjrZsLQzxe0GAPLH-pCaAl_Ti02TcuEYsrQ1GV5OrKwmFj_bJcpmDLBDXFh4tpnfHCKaD-i5_49NUas8BauwUo7BiozecJhRv1yMYQAVI4ozwrmyUOc04i3xpeTy91UrNCvx-v6GwtyL07EG3MNE-3ibzDmlJzbXkYzTRics1D4oT23XV67n9Tp9eb_rlmq7_zxW_R611g7Q',
-  },
-  {
-    name: 'Mochila Porta Laptop Cóndor',
-    section: 'Textil & Transporte',
-    desc: 'Polyester balístico hidrófugo con puerto USB integrado',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAtKVF4Q1KpYV1dcC-7aUtw3leDVBfm2GS5iRT8llw0VepYLY-BTO51aD4WOncTcf8vtYwlXUn6DxlnMoeQn0RLUM36AeC23bPvqlHzDZRojdlgsOLNDoGDvNYIGereFz-zofFDANiiKNCpYOPafbVlrHwAXQdEKzu9IvlbkmNp3S6i2DX7cUXi2aPfD0kwgV7tBtmaiZXQKfO0e4QP0sZFw8OAUQPIuj2XJOcnAQnUGMoYcgJFanBQZg',
-  },
-];
+const crossSellProductIds = ['5', '10', '6', '9'];
+const crossSellProducts = crossSellProductIds.flatMap((productId) => {
+  const product = mockProducts.find(({ id }) => id === productId);
+  return product ? [product] : [];
+});
 
 const Product = () => {
   const { id } = useParams<{ id: string }>();
@@ -61,7 +41,7 @@ const Product = () => {
   const [loading, setLoading] = useState(true);
   const [selectedColor, setSelectedColor] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState<'specs' | 'craft' | 'shipping'>('specs');
+  const [isImageOpen, setIsImageOpen] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -99,6 +79,17 @@ const Product = () => {
     fetchProduct();
   }, [id]);
 
+  useEffect(() => {
+    if (!isImageOpen) return;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsImageOpen(false);
+    };
+
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [isImageOpen]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-crema">
@@ -125,7 +116,7 @@ const Product = () => {
     );
   }
 
-  const whatsappMsg = `Hola Núcleo Capital Arequipa, deseo cotizar formalmente ${quantity} unidades del ${producto.nombre} en color ${producto.colores[selectedColor] || 'estándar'}.`;
+  const whatsappMsg = `Hola Nucleo Capital SRL, deseo cotizar formalmente ${quantity} unidades del ${producto.nombre} en color ${producto.colores[selectedColor] || 'estándar'}.`;
   const whatsappUrl = `https://wa.me/51983033938?text=${encodeURIComponent(whatsappMsg)}`;
 
   return (
@@ -146,7 +137,7 @@ const Product = () => {
         {/* TOP GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
           {/* LEFT: GALLERY */}
-          <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="lg:col-span-7 flex flex-col gap-space-lg">
+          <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="order-2 flex flex-col gap-space-lg lg:order-2 lg:col-span-7">
             <div className="relative bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden group">
               <div className="absolute top-space-md left-space-md z-10 flex flex-wrap gap-space-xs">
                 {producto.badge && (
@@ -156,29 +147,23 @@ const Product = () => {
                   </span>
                 )}
               </div>
-              <div className="relative w-full aspect-[4/3] bg-surface-container-low flex items-center justify-center overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setIsImageOpen(true)}
+                className="relative block w-full aspect-[4/3] bg-surface-container-low flex items-center justify-center overflow-hidden cursor-zoom-in"
+                aria-label={`Ampliar imagen de ${producto.nombre}`}
+              >
                 <img src={producto.imagen} alt={producto.nombre} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              </div>
+                <span className="absolute bottom-space-sm right-space-sm flex h-10 w-10 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100">
+                  <span className="material-symbols-outlined">zoom_in</span>
+                </span>
+              </button>
             </div>
 
-            {/* Warranty Badge */}
-            <div className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col sm:flex-row items-center gap-space-md">
-              <div className="w-12 h-12 rounded-xl bg-azul flex items-center justify-center shrink-0 shadow-[0_2px_10px_rgba(3,75,165,0.2)]">
-                <span className="material-symbols-outlined text-white text-2xl">verified_user</span>
-              </div>
-              <div className="flex-1 text-center sm:text-left">
-                <h2 className="font-title-lg text-title-lg text-azul">Garantía Directa de Taller en Yanahuara</h2>
-                <p className="font-body-md text-body-md text-on-surface-variant">Generamos tu mockup 3D fotorrealista con tu logo en menos de 2 horas. Solicita una muestra física previa para tu orden corporativa.</p>
-              </div>
-              <span className="inline-flex items-center gap-1 bg-surface-container-low text-azul font-label-sm text-label-sm px-space-sm py-1 rounded-full font-semibold shrink-0">
-                <span className="material-symbols-outlined text-xs">timer</span>
-                Entrega Arequipa 48h
-              </span>
-            </div>
           </motion.div>
 
           {/* RIGHT: CONFIGURATOR */}
-          <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="lg:col-span-5 flex flex-col gap-space-lg">
+          <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="order-1 flex flex-col gap-space-lg lg:order-1 lg:col-span-5">
             {/* Product Header */}
             <div className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
               <span className="font-label-sm text-label-sm text-azul font-semibold uppercase tracking-wider">{producto.categoria} • {producto.tipo}</span>
@@ -251,91 +236,27 @@ const Product = () => {
           </motion.div>
         </div>
 
-        {/* TABS */}
-        <div className="mt-space-3xl flex flex-col gap-space-lg">
-          <div className="flex items-center gap-space-xs overflow-x-auto pb-space-xs border-b border-outline-variant/30">
-            {([
-              { key: 'specs', label: 'Especificaciones Técnicas' },
-              { key: 'craft', label: 'Técnicas de Personalización' },
-              { key: 'shipping', label: 'Logística & Despacho' },
-            ] as const).map((tab) => (
-              <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={`font-label-md text-label-md px-space-lg py-space-sm rounded-full transition-all whitespace-nowrap ${activeTab === tab.key ? 'bg-azul text-white font-bold' : 'text-on-surface-variant hover:text-azul font-medium'}`}>
-                {tab.label}
+        {isImageOpen && (
+          <div
+            className="fixed inset-0 z-[70] flex items-center justify-center bg-black/85 p-gutter-mobile backdrop-blur-sm lg:p-gutter-desktop"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Imagen ampliada de ${producto.nombre}`}
+            onClick={() => setIsImageOpen(false)}
+          >
+            <div className="relative max-h-full max-w-6xl" onClick={(event) => event.stopPropagation()}>
+              <img src={producto.imagen} alt={producto.nombre} className="max-h-[85vh] w-auto max-w-full rounded-xl object-contain shadow-2xl" />
+              <button
+                type="button"
+                onClick={() => setIsImageOpen(false)}
+                className="absolute right-space-sm top-space-sm flex h-10 w-10 items-center justify-center rounded-full bg-black/70 text-white transition-colors hover:bg-black"
+                aria-label="Cerrar imagen ampliada"
+              >
+                <span className="material-symbols-outlined">close</span>
               </button>
-            ))}
+            </div>
           </div>
-
-          {activeTab === 'specs' && (
-            <div className="bg-surface-container-lowest rounded-xl p-space-xl shadow-sm">
-              <h2 className="font-headline-sm text-headline-sm text-azul mb-space-md">Ficha de Producto</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-space-md">
-                <div className="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-1">
-                  <span className="font-label-sm text-label-sm text-outline uppercase font-semibold">Categoría</span>
-                  <span className="font-title-lg text-title-lg text-azul font-bold">{producto.categoria}</span>
-                </div>
-                <div className="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-1">
-                  <span className="font-label-sm text-label-sm text-outline uppercase font-semibold">Tipo</span>
-                  <span className="font-title-lg text-title-lg text-azul font-bold">{producto.tipo}</span>
-                </div>
-                <div className="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-1">
-                  <span className="font-label-sm text-label-sm text-outline uppercase font-semibold">Material</span>
-                  <span className="font-title-lg text-title-lg text-azul font-bold">{producto.material}</span>
-                </div>
-                {producto.capacidad && (
-                  <div className="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-1">
-                    <span className="font-label-sm text-label-sm text-outline uppercase font-semibold">Capacidad</span>
-                    <span className="font-title-lg text-title-lg text-azul font-bold">{producto.capacidad}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'craft' && (
-            <div className="bg-surface-container-lowest rounded-xl p-space-xl shadow-sm">
-              <span className="font-label-sm text-label-sm text-azul font-bold uppercase tracking-wider">Taller Yanahuara • Precisión CNC</span>
-              <h2 className="font-headline-sm text-headline-sm text-azul mt-1 mb-space-md">Tecnología de Grabado Láser de Fibra Óptica</h2>
-              <p className="font-body-md text-body-md text-on-surface-variant mb-space-md">Nuestro taller cuenta con estaciones de fibra óptica de estado sólido con haz concentrado de 1064nm.</p>
-              <ul className="flex flex-col gap-space-xs font-body-md text-body-md text-on-surface">
-                <li className="flex items-start gap-2">
-                  <span className="material-symbols-outlined text-azul text-lg mt-0.5">check_circle</span>
-                  <span><strong>Resolución Milimétrica:</strong> Reproducción fiel de isotipos con líneas tan finas como 0.1 mm.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="material-symbols-outlined text-azul text-lg mt-0.5">check_circle</span>
-                  <span><strong>Permanencia Indeleble:</strong> Remoción selectiva del powder coating revelando el acero quirúrgico brillante.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="material-symbols-outlined text-azul text-lg mt-0.5">check_circle</span>
-                  <span><strong>Capacidad de Producción:</strong> Más de 1,200 piezas grabadas por turno en nuestro propio taller.</span>
-                </li>
-              </ul>
-            </div>
-          )}
-
-          {activeTab === 'shipping' && (
-            <div className="bg-surface-container-lowest rounded-xl p-space-xl shadow-sm">
-              <span className="font-label-sm text-label-sm text-azul font-bold uppercase tracking-wider">Cadena de Suministro Directa</span>
-              <h2 className="font-headline-sm text-headline-sm text-azul mt-1 mb-space-md">Plazos de Entrega y Embalaje</h2>
-              <div className="flex flex-col gap-space-md">
-                <div className="p-space-md rounded-lg bg-surface-container-low flex items-start gap-space-md">
-                  <span className="material-symbols-outlined text-azul text-2xl mt-0.5">apartment</span>
-                  <div>
-                    <h4 className="font-title-lg text-title-lg text-azul">Arequipa Metropolitana • 48 a 72 Horas</h4>
-                    <p className="font-body-md text-body-md text-on-surface-variant">Entrega directa en oficinas corporativas con movilidad propia.</p>
-                  </div>
-                </div>
-                <div className="p-space-md rounded-lg bg-surface-container-low flex items-start gap-space-md">
-                  <span className="material-symbols-outlined text-azul text-2xl mt-0.5">terrain</span>
-                  <div>
-                    <h4 className="font-title-lg text-title-lg text-azul">Campamentos Mineros & Corredor Sur • 3 a 5 Días</h4>
-                    <p className="font-body-md text-body-md text-on-surface-variant">Despacho con embalaje paletizado hacia Moquegua, Cusco, Tacna y Puno.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+        )}
 
         {/* CROSS-SELLING */}
         <div className="mt-space-3xl">
@@ -349,15 +270,15 @@ const Product = () => {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
-            {crossSellProducts.map((p) => (
-              <div key={p.name} className="bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
+             {crossSellProducts.map((p) => (
+              <div key={p.id} className="bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
                 <div className="aspect-square rounded-lg overflow-hidden bg-surface-container-low mb-space-sm">
-                  <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                   <img src={p.imagen} alt={p.nombre} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                 </div>
                 <div>
-                  <span className="font-label-sm text-label-sm text-outline">{p.section}</span>
-                  <h4 className="font-title-lg text-title-lg text-azul text-base">{p.name}</h4>
-                  <p className="font-label-sm text-on-surface-variant text-[12px] mb-2">{p.desc}</p>
+                   <span className="font-label-sm text-label-sm text-outline">{p.categoria}</span>
+                   <h4 className="font-title-lg text-title-lg text-azul text-base">{p.nombre}</h4>
+                   <p className="font-label-sm text-on-surface-variant text-[12px] mb-2">{p.descripcion}</p>
                   <div className="flex items-baseline justify-between pt-space-xs border-t border-outline-variant/30">
                     <button className="text-azul hover:text-azul-dark font-label-sm text-label-sm font-semibold flex items-center gap-0.5">
                       <span className="material-symbols-outlined text-sm">add_circle</span> Añadir al Pack

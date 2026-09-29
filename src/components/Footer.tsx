@@ -1,4 +1,5 @@
-import logoSvg from '../assets/logo.svg';
+import logoSvg from '../assets/Logo grande.svg';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -8,7 +9,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="flex flex-col gap-space-md">
             <div className="flex items-center gap-space-xs">
-              <img src={logoSvg} alt="Núcleo Capital" className="h-8 w-auto" />
+              <img src={logoSvg} alt="Nucleo Capital SRL" className="h-10 w-auto" />
             </div>
             <p className="font-body-md text-body-md text-on-surface-variant max-w-sm">
               Soluciones integrales de alta gama en artículos corporativos, textiles técnicos y merchandising de precisión para marcas y firmas en el sur del país.
@@ -31,20 +32,20 @@ const Footer = () => {
           <div className="flex flex-col gap-space-sm">
             <span className="font-title-lg text-title-lg text-azul">Showroom & Taller</span>
             <div className="flex items-start gap-space-xs text-on-surface-variant">
-              <span className="material-symbols-outlined text-azul mt-1 text-lg">location_on</span>
-              <span className="font-body-md text-body-md">Calle Pizarro, Arequipa - Perú</span>
+              <span className="material-symbols-outlined text-azul mt-1 w-5 shrink-0 text-lg text-center">location_on</span>
+              <span className="font-body-md text-body-md">Galerías Pizarro, Pizarro 308, Arequipa - Perú</span>
             </div>
             <div className="flex items-center gap-space-xs text-on-surface-variant">
-              <span className="material-symbols-outlined text-azul text-lg">phone</span>
+              <span className="material-symbols-outlined text-azul w-5 shrink-0 text-lg text-center">phone</span>
               <span className="font-body-md text-body-md">+51 983 033 938</span>
             </div>
             <div className="flex items-center gap-space-xs text-on-surface-variant">
-              <span className="material-symbols-outlined text-azul text-lg">mail</span>
+              <span className="material-symbols-outlined text-azul w-5 shrink-0 text-lg text-center">mail</span>
               <span className="font-body-md text-body-md">ventas@nucleocapital.pe</span>
             </div>
             <div className="flex items-center gap-space-xs text-on-surface-variant">
-              <span className="material-symbols-outlined text-azul text-lg">schedule</span>
-              <span className="font-body-md text-body-md">Lun - Vie: 8:30 AM - 6:30 PM</span>
+              <span className="material-symbols-outlined text-azul w-5 shrink-0 text-lg text-center">schedule</span>
+              <span className="font-body-md text-body-md">Lun - Sáb: 9:00 AM - 8:00 PM</span>
             </div>
           </div>
 
@@ -59,11 +60,11 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-outline-variant/60 pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-sm">
-          <span className="font-label-sm text-label-sm text-outline">© {new Date().getFullYear()} Núcleo Capital Arequipa S.A.C. Todos los derechos reservados.</span>
-          <div className="flex items-center gap-space-md">
-            <span className="font-label-sm text-label-sm text-outline hover:text-on-surface cursor-pointer">Políticas de Garantía</span>
-            <span className="font-label-sm text-label-sm text-outline hover:text-on-surface cursor-pointer">Términos de Servicio</span>
-            <span className="font-label-sm text-label-sm text-outline hover:text-on-surface cursor-pointer">Libro de Reclamaciones</span>
+          <span className="font-label-sm text-label-sm text-outline">© {new Date().getFullYear()} Nucleo Capital SRL. Todos los derechos reservados.</span>
+          <div className="flex flex-wrap items-center justify-center gap-space-md">
+            <Link to="/politicas-de-garantia" className="font-label-sm text-label-sm text-outline hover:text-on-surface">Políticas de Garantía</Link>
+            <Link to="/terminos-de-servicio" className="font-label-sm text-label-sm text-outline hover:text-on-surface">Términos de Servicio</Link>
+            <Link to="/libro-de-reclamaciones" className="font-label-sm text-label-sm text-outline hover:text-on-surface">Libro de Reclamaciones</Link>
           </div>
         </div>
       </div>

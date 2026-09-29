@@ -1,35 +1,38 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import HeroAnimation from '../components/HeroAnimation';
 import BrandMarquee from '../components/BrandMarquee';
+import { db } from '../firebase';
+import type { Producto } from '../types/product';
 
 const servicios = [
   {
     icon: 'local_cafe',
-    tags: ['Láser de Alta Precisión', 'Muestras Físicas'],
     title: 'Merchandising Corporativo',
+    tags: ['Láser', 'Muestras Físicas'],
     desc: 'Tomatodos térmicos con grabado láser, tazas matte, polos de algodón pima, libretas de eco-cuero, lanyards institucionales y pines esmaltados de lujo.',
     linkText: 'Cotizar línea merch',
   },
   {
     icon: 'palette',
-    tags: ['Manual de Marca', 'Material POP'],
     title: 'Publicidad & Branding',
+    tags: ['Manual de Marca', 'Material POP'],
     desc: 'Identidad corporativa 360°, manuales de marca para franquicias, rotulado vehicular microperforado, señalética arquitectónica en sillar y acrílico, y stands para ferias.',
     linkText: 'Desarrollar marca',
   },
   {
     icon: 'photo_camera',
-    tags: ['Iluminación Editorial', 'Video 4K'],
     title: 'Fotografía Comercial & Video',
+    tags: ['Fotografía de Producto', 'Producciones Gastronómicas'],
     desc: 'Fotografía de producto para ecommerce, producciones gastronómicas para alta cocina mistiana, reels publicitarios cinemáticos y cobertura ejecutiva de directorios.',
     linkText: 'Explorar shooting',
   },
   {
     icon: 'inventory_2',
+    title: 'Diseño & Publicidad Impresa',
     tags: ['Foil Dorado / Plata', 'Troquel Especial'],
-    title: 'Diseño & Empaques de Lujo',
     desc: 'Cajas rígidas magnéticas, bolsas biodegradables en papel kraft serigrafiadas, fajas en cartulina importada con hot stamping y kits de bienvenida para ejecutivos.',
     linkText: 'Cotizar empaques',
   },
@@ -51,6 +54,39 @@ const categorias = [
 
 const Home = () => {
   const [activeCategory, setActiveCategory] = useState(0);
+  const [productosActivos, setProductosActivos] = useState<Producto[]>([]);
+
+  useEffect(() => {
+    const fetchActiveProducts = async () => {
+      try {
+        const snapshot = await getDocs(query(collection(db, 'productos'), where('activo', '==', true)));
+        const products = snapshot.docs.map((productDoc) => {
+          const data = productDoc.data();
+          return {
+            id: productDoc.id,
+            nombre: data.nombre,
+            descripcion: data.descripcion,
+            imagen: data.imagen,
+            categoria: data.categoria,
+            tipo: data.tipo,
+            activo: data.activo,
+            fechaCreacion: data.fechaCreacion?.toDate() || new Date(),
+            colores: data.colores || [],
+            material: data.material || '',
+            capacidad: data.capacidad,
+            badge: data.badge,
+          } as Producto;
+        });
+
+        products.sort((a, b) => b.fechaCreacion.getTime() - a.fechaCreacion.getTime());
+        setProductosActivos(products);
+      } catch (error) {
+        console.error('Error al cargar productos activos:', error);
+      }
+    };
+
+    fetchActiveProducts();
+  }, []);
 
   return (
     <div className="flex flex-col w-full">
@@ -104,6 +140,56 @@ const Home = () => {
 
       <BrandMarquee />
 
+      {productosActivos.length > 0 && (
+        <section className="w-full bg-crema py-space-3xl border-y border-outline-variant/50" id="novedades">
+          <div className="max-w-[1280px] mx-auto px-gutter-mobile lg:px-gutter-desktop">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-2xl">
+              <div>
+                <span className="font-label-sm text-label-sm text-azul uppercase tracking-widest font-bold">Catálogo actualizado</span>
+                <h2 className="font-headline-lg text-headline-lg text-azul tracking-tight mt-space-2xs">Novedades</h2>
+              </div>
+              <Link to="/tienda" className="inline-flex items-center gap-space-xs text-azul font-label-lg text-label-lg font-bold hover:text-azul-dark transition-colors">
+                Ver todos los productos
+                <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </Link>
+            </div>
+
+            <div className="flex snap-x snap-mandatory gap-space-lg overflow-x-auto pb-space-sm">
+              {productosActivos.map((producto, index) => (
+                <motion.article
+                  key={producto.id}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, delay: index * 0.06 }}
+                  viewport={{ once: true }}
+                  className="group flex w-[85%] flex-none snap-start flex-col overflow-hidden rounded-xl border border-outline-variant/70 bg-surface-container-lowest shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg sm:w-[48%] lg:w-[calc((100%-4.5rem)/4)]"
+                >
+                  <Link to={`/producto/${producto.id}`} className="flex h-full flex-col">
+                    <div className="relative aspect-square overflow-hidden bg-surface-container-low">
+                      <img src={producto.imagen} alt={producto.nombre} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      {producto.badge && (
+                        <span className="absolute left-space-sm top-space-sm rounded-full bg-azul px-space-sm py-1 font-label-sm text-label-sm font-bold text-white">
+                          {producto.badge}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex flex-1 flex-col p-space-md">
+                      <span className="font-label-sm text-label-sm font-bold uppercase tracking-wider text-outline">{producto.categoria}</span>
+                      <h3 className="mt-space-2xs font-title-lg text-title-lg font-bold leading-tight text-azul">{producto.nombre}</h3>
+                      <p className="mt-space-xs line-clamp-3 font-body-sm text-body-sm text-on-surface-variant">{producto.descripcion}</p>
+                      <span className="mt-auto flex items-center gap-space-2xs pt-space-md font-label-md text-label-md font-bold text-azul">
+                        Ver producto
+                        <span className="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">arrow_forward</span>
+                      </span>
+                    </div>
+                  </Link>
+                </motion.article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* SERVICIOS ESPECIALIZADOS */}
       <section className="w-full py-space-3xl bg-surface-container-low border-y border-outline-variant/50" id="servicios">
         <div className="max-w-[1280px] mx-auto px-gutter-mobile lg:px-gutter-desktop">
@@ -132,6 +218,7 @@ const Home = () => {
                   <div className="w-14 h-14 rounded-full bg-azul/10 flex items-center justify-center text-azul mb-space-lg group-hover:scale-110 transition-transform">
                     <span className="material-symbols-outlined text-[28px]">{serv.icon}</span>
                   </div>
+                  <h3 className="font-title-md text-title-md text-azul font-bold mb-space-xs">{serv.title}</h3>
                   <div className="flex flex-wrap gap-space-2xs mb-space-sm">
                     {serv.tags.map((tag, i) => (
                       <span key={i} className="px-space-xs py-0.5 rounded-full bg-surface-container text-azul font-label-sm text-label-sm font-semibold border border-outline-variant/50">
@@ -139,7 +226,6 @@ const Home = () => {
                       </span>
                     ))}
                   </div>
-                  <h3 className="font-title-md text-title-md text-azul font-bold mb-space-xs">{serv.title}</h3>
                   <p className="font-body-sm text-body-sm text-on-surface-variant mb-space-md">{serv.desc}</p>
                 </div>
                 <div className="pt-space-md mt-space-md">
@@ -170,7 +256,7 @@ const Home = () => {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-space-md">
             <a
-              href="https://wa.me/51983033938?text=Hola%20Núcleo%20Capital,%20quisiera%20una%20cotización"
+              href="https://wa.me/51983033938?text=Hola%20Nucleo%20Capital%20SRL,%20quisiera%20una%20cotización"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-space-xs px-space-2xl py-space-md rounded-full bg-azul text-white font-label-lg text-label-lg shadow-xl hover:bg-azul-dark transition-all"

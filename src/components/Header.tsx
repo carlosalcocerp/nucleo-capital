@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import logoSvg from '../assets/logo.svg';
+import logoSvg from '../assets/Logo grande.svg';
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
     { label: 'Inicio', href: '/' },
-    { label: 'Catálogo Merchandising', href: '/tienda' },
-
   ];
 
   return (
@@ -17,34 +15,43 @@ const Header = () => {
         {/* Logo */}
         <div className="flex items-center gap-space-lg">
           <Link to="/" className="flex items-center gap-space-xs">
-            <img src={logoSvg} alt="Núcleo Capital" className="h-10 w-auto" />
+            <img src={logoSvg} alt="Nucleo Capital SRL" className="h-14 w-auto" />
           </Link>
         </div>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-space-xs bg-surface-container-low p-1.5 rounded-full">
+        <nav className="hidden lg:ml-auto lg:flex items-center gap-space-lg">
           {navLinks.map((link) => (
             <Link
               key={link.label}
               to={link.href}
-              className="font-label-md text-label-md text-on-surface-variant hover:text-azul px-space-md py-space-xs rounded-full transition-all duration-150"
+              className="font-label-lg text-lg font-bold uppercase tracking-wide text-on-surface-variant hover:text-azul transition-colors duration-150"
             >
               {link.label}
             </Link>
           ))}
+          <Link
+            to="/contactanos"
+            className="font-label-lg text-lg font-bold uppercase tracking-wide text-on-surface-variant transition-colors duration-150 hover:text-azul"
+          >
+            Contactanos
+          </Link>
         </nav>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-space-sm">
-          <a
-            href="https://wa.me/51983033938"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-space-xs bg-azul text-white px-space-md py-2.5 rounded-full font-label-md text-label-md hover:shadow-[0_4px_14px_rgba(3,75,165,0.25)] hover:brightness-105 transition-all"
+        <div className="flex items-center gap-space-sm lg:ml-space-md">
+          <Link
+            to="/tienda"
+            className="group flex h-12 w-fit items-center justify-between gap-space-sm whitespace-nowrap rounded-full border-2 border-azul bg-azul pl-space-lg pr-1 text-white shadow-sm transition-all hover:border-[#75b847] hover:bg-[#75b847] hover:shadow-[0_4px_14px_rgba(117,184,71,0.3)]"
           >
-            <span className="material-symbols-outlined text-lg">chat</span>
-            <span className="hidden sm:inline font-semibold">Cotizar WhatsApp</span>
-          </a>
+            <span className="text-center text-lg font-extrabold uppercase leading-none tracking-tight">
+              <span className="hidden sm:inline">Catálogo</span>
+              <span className="sm:hidden">Catálogo</span>
+            </span>
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-crema text-azul transition-transform group-hover:translate-x-0.5">
+              <span className="material-symbols-outlined text-[23px]">arrow_forward</span>
+            </span>
+          </Link>
 
           {/* Mobile Menu Button */}
           <button
@@ -72,6 +79,13 @@ const Header = () => {
                 {link.label}
               </Link>
             ))}
+            <Link
+              to="/contactanos"
+              onClick={() => setMobileMenuOpen(false)}
+              className="rounded-lg px-space-md py-space-sm text-left font-label-lg text-label-lg text-on-surface-variant transition-all hover:bg-surface-container-low hover:text-azul"
+            >
+              CONTACTANOS
+            </Link>
           </nav>
         </div>
       )}
