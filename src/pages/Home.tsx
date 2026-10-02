@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { collection, getDocs, query, where } from 'firebase/firestore';
@@ -6,6 +6,19 @@ import HeroAnimation from '../components/HeroAnimation';
 import BrandMarquee from '../components/BrandMarquee';
 import { db } from '../firebase';
 import type { Producto } from '../types/product';
+
+const logosClientes = Object.entries(import.meta.glob<string>('../assets/clientes/*.svg', {
+  eager: true,
+  import: 'default',
+  query: '?url',
+}))
+  .sort(([pathA], [pathB]) => pathA.localeCompare(pathB))
+  .map(([path, src], index) => ({
+    path,
+    src,
+    alt: `Cliente ${String(index + 1).padStart(2, '0')}`,
+  }));
+const logosPorVista = 10;
 
 const servicios = [
   {
@@ -54,7 +67,27 @@ const categorias = [
 
 const Home = () => {
   const [activeCategory, setActiveCategory] = useState(0);
+  const [paginaLogos, setPaginaLogos] = useState(0);
   const [productosActivos, setProductosActivos] = useState<Producto[]>([]);
+  const productsTrackRef = useRef<HTMLDivElement>(null);
+  const productsCount = Math.min(productosActivos.length, 8);
+  const productosCarrusel = productosActivos.slice(0, productsCount);
+  const productosDuplicados = [...productosCarrusel, ...productosCarrusel];
+
+  useEffect(() => {
+    if (logosClientes.length <= logosPorVista) return;
+
+    const intervalId = window.setInterval(() => {
+      setPaginaLogos((paginaActual) => (paginaActual + 1) % Math.ceil(logosClientes.length / logosPorVista));
+    }, 5000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
+  const inicioLogos = (paginaLogos * logosPorVista) % logosClientes.length;
+  const logosVisibles = logosClientes.length > logosPorVista
+    ? Array.from({ length: logosPorVista }, (_, index) => logosClientes[(inicioLogos + index) % logosClientes.length])
+    : logosClientes;
 
   useEffect(() => {
     const fetchActiveProducts = async () => {
@@ -87,6 +120,28 @@ const Home = () => {
 
     fetchActiveProducts();
   }, []);
+
+  useEffect(() => {
+    const track = productsTrackRef.current;
+    if (!track || productsCount < 2) return;
+
+    const intervalId = window.setInterval(() => {
+      const firstCard = track.querySelector<HTMLElement>('[data-product-card]');
+      if (!firstCard) return;
+
+      const gap = Number.parseFloat(window.getComputedStyle(track).columnGap) || 0;
+      const step = firstCard.getBoundingClientRect().width + gap;
+      const loopDistance = step * productsCount;
+      const nextScrollLeft = track.scrollLeft + step;
+
+      track.scrollTo({
+        left: nextScrollLeft >= loopDistance ? nextScrollLeft - loopDistance : nextScrollLeft,
+        behavior: 'smooth',
+      });
+    }, 5000);
+
+    return () => window.clearInterval(intervalId);
+  }, [productsCount]);
 
   return (
     <div className="flex flex-col w-full">
@@ -154,10 +209,11 @@ const Home = () => {
               </Link>
             </div>
 
-            <div className="flex snap-x snap-mandatory gap-space-lg overflow-x-auto pb-space-sm">
-              {productosActivos.map((producto, index) => (
+            <div ref={productsTrackRef} className="flex snap-x snap-mandatory gap-space-lg overflow-x-auto pb-space-sm">
+              {productosDuplicados.map((producto, index) => (
                 <motion.article
-                  key={producto.id}
+                  key={`${producto.id}-${index}`}
+                  data-product-card
                   initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.45, delay: index * 0.06 }}
@@ -251,9 +307,6 @@ const Home = () => {
           <h2 className="font-headline-lg text-headline-lg text-azul tracking-tight max-w-3xl mx-auto mb-space-md">
             ¿Listo para transformar  la imagen de tu empresa?
           </h2>
-          <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-space-xl">
-            Agenda una visita a nuestro showroom o conversemos directamente por WhatsApp para preparar tu cotización formal con mockup 3D sin costo.
-          </p>
           <div className="flex flex-wrap items-center justify-center gap-space-md">
             <a
               href="https://wa.me/51983033938?text=Hola%20Nucleo%20Capital%20SRL,%20quisiera%20una%20cotización"
@@ -271,6 +324,31 @@ const Home = () => {
               <span className="material-symbols-outlined text-[20px]">storefront</span>
                Ver Productos
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* MARCAS */}
+      <section className="w-full border-y border-white/10 bg-azul py-space-2xl" aria-labelledby="marcas-heading">
+        <div className="max-w-[1280px] mx-auto px-gutter-mobile lg:px-gutter-desktop">
+          <div className="mb-space-lg text-center">
+            <h2 id="marcas-heading" className="mt-space-2xs flex flex-wrap items-center justify-center gap-space-md font-headline-lg text-headline-lg text-crema">
+              <span className="font-black uppercase">Confían</span>
+              <span className="font-normal normal-case">EN NÚCLEO</span>
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 gap-space-lg sm:grid-cols-3 lg:grid-cols-5">
+            {logosVisibles.map((logo, index) => (
+              <motion.div
+                key={`${paginaLogos}-${logo.path}`}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: index * 0.04 }}
+                className="flex min-h-32 items-center justify-center px-space-sm"
+              >
+                <img src={logo.src} alt={logo.alt} className="h-auto max-h-24 w-full max-w-[320px] object-contain" />
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>

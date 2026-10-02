@@ -169,7 +169,7 @@ const Product = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
           {/* LEFT: GALLERY */}
           <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="order-2 flex flex-col gap-space-lg lg:order-2 lg:col-span-7">
-            <div className="relative bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden group">
+            <div className="relative rounded-xl bg-white shadow-sm overflow-hidden group">
               <div className="absolute top-space-md left-space-md z-10 flex flex-wrap gap-space-xs">
                 {producto.badge && (
                   <span className="bg-azul text-white px-space-sm py-1 rounded-full font-label-sm text-label-sm font-semibold flex items-center gap-1 shadow-sm">
@@ -181,10 +181,10 @@ const Product = () => {
               <button
                 type="button"
                 onClick={() => setIsImageOpen(true)}
-                className="relative block w-full aspect-[4/3] bg-surface-container-low flex items-center justify-center overflow-hidden cursor-zoom-in"
+                className="relative flex w-full items-center justify-center overflow-hidden bg-white cursor-zoom-in"
                 aria-label={`Ampliar imagen de ${producto.nombre}`}
               >
-                <img src={producto.imagen} alt={producto.nombre} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <img src={producto.imagen} alt={producto.nombre} className="block h-auto max-h-[75svh] w-full object-contain" />
                 <span className="absolute bottom-space-sm right-space-sm flex h-10 w-10 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100">
                   <span className="material-symbols-outlined">zoom_in</span>
                 </span>

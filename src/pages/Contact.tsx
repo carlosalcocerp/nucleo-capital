@@ -34,6 +34,39 @@ const Contact = () => {
             <a href="tel:+51983033938" className="mt-space-xs block font-body-md text-body-md text-on-surface-variant hover:text-azul">+51 983 033 938</a>
           </div>
         </div>
+
+        {/* CTA SECTION */}
+        <section className="w-full py-space-3xl bg-crema relative overflow-hidden">
+          <div className="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-azul/5 blur-3xl pointer-events-none"></div>
+          <div className="max-w-[1280px] mx-auto px-gutter-mobile lg:px-gutter-desktop relative z-10 text-center">
+            <div className="inline-flex items-center gap-space-2xs px-space-md py-space-2xs rounded-full bg-surface-container-lowest border border-outline-variant/70 shadow-sm mb-space-md">
+              <span className="w-2 h-2 rounded-full bg-azul"></span>
+              <span className="font-label-sm text-label-sm text-azul uppercase font-bold tracking-wider">Hablemos Hoy Mismo</span>
+            </div>
+            <h2 className="font-headline-lg text-headline-lg text-azul tracking-tight max-w-3xl mx-auto mb-space-md">
+              No dejes que la duda te gane y pregunta
+            </h2>
+            <div className="flex flex-wrap items-center justify-center gap-space-md">
+              <a
+                href="https://wa.me/51983033938?text=Hola%20Nucleo%20Capital%20SRL,%20quisiera%20una%20cotización"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-space-xs px-space-2xl py-space-md rounded-full bg-azul text-white font-label-lg text-label-lg shadow-xl hover:bg-azul-dark transition-all"
+              >
+                <span className="material-symbols-outlined text-[20px]">chat</span>
+                Iniciar Chat en WhatsApp
+              </a>
+              <Link
+                to="/tienda"
+                className="inline-flex items-center gap-space-xs px-space-2xl py-space-md rounded-full bg-surface-container-lowest border border-outline-variant/70 text-azul font-label-lg text-label-lg shadow-md hover:bg-surface-container-high transition-all"
+              >
+                <span className="material-symbols-outlined text-[20px]">storefront</span>
+                Ver Productos
+              </Link>
+            </div>
+          </div>
+        </section>
+
       </div>
     </div>
   );
