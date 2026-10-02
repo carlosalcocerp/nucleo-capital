@@ -7,6 +7,8 @@ const Header = () => {
 
   const navLinks = [
     { label: 'Inicio', href: '/' },
+    { label: 'Proyectos', href: '/proyectos' },
+    { label: 'Web & Apps', href: '/web-apps' },
   ];
 
   return (
@@ -45,8 +47,8 @@ const Header = () => {
             className="group flex h-12 w-fit items-center justify-between gap-space-sm whitespace-nowrap rounded-full border-2 border-azul bg-azul pl-space-lg pr-1 text-white shadow-sm transition-all hover:border-[#75b847] hover:bg-[#75b847] hover:shadow-[0_4px_14px_rgba(117,184,71,0.3)]"
           >
             <span className="text-center text-lg font-extrabold uppercase leading-none tracking-tight">
-              <span className="hidden sm:inline">Catálogo</span>
-              <span className="sm:hidden">Catálogo</span>
+              <span className="hidden sm:inline">Productos</span>
+              <span className="sm:hidden">Productos</span>
             </span>
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-crema text-azul transition-transform group-hover:translate-x-0.5">
               <span className="material-symbols-outlined text-[23px]">arrow_forward</span>

@@ -111,7 +111,7 @@ const Home = () => {
                 </div>
                 <p className="font-body-md text-body-md text-on-surface-variant min-h-[44px]">{categorias[activeCategory].detail}</p>
                 <Link to="/tienda" className="mt-space-lg inline-flex items-center gap-space-sm bg-azul text-white px-space-lg py-space-sm rounded-full font-label-md text-label-md font-bold hover:bg-azul-dark transition-all group">
-                  Ver todo el catálogo
+                  Ver todos los productos
                   <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
                 </Link>
               </div>
@@ -145,7 +145,7 @@ const Home = () => {
           <div className="max-w-[1280px] mx-auto px-gutter-mobile lg:px-gutter-desktop">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-2xl">
               <div>
-                <span className="font-label-sm text-label-sm text-azul uppercase tracking-widest font-bold">Catálogo actualizado</span>
+                <span className="font-label-sm text-label-sm text-azul uppercase tracking-widest font-bold">Productos actualizados</span>
                 <h2 className="font-headline-lg text-headline-lg text-azul tracking-tight mt-space-2xs">Novedades</h2>
               </div>
               <Link to="/tienda" className="inline-flex items-center gap-space-xs text-azul font-label-lg text-label-lg font-bold hover:text-azul-dark transition-colors">
@@ -269,7 +269,7 @@ const Home = () => {
               className="inline-flex items-center gap-space-xs px-space-2xl py-space-md rounded-full bg-surface-container-lowest border border-outline-variant/70 text-azul font-label-lg text-label-lg shadow-md hover:bg-surface-container-high transition-all"
             >
               <span className="material-symbols-outlined text-[20px]">storefront</span>
-              Ver Catálogo de Productos
+               Ver Productos
             </Link>
           </div>
         </div>

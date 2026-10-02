@@ -17,7 +17,7 @@ const Contact = () => {
           </p>
         </header>
 
-        <div className="mt-space-xl grid grid-cols-1 gap-space-lg sm:grid-cols-2">
+        <div className="mt-space-xl grid grid-cols-1 gap-space-lg lg:grid-cols-3">
           <div className="rounded-2xl border border-outline-variant/70 bg-surface-container-lowest p-space-xl shadow-sm">
             <span className="material-symbols-outlined text-3xl text-azul">location_on</span>
             <h2 className="mt-space-md font-title-lg text-title-lg font-bold text-azul">Visítanos</h2>
@@ -33,25 +33,6 @@ const Contact = () => {
             <h2 className="mt-space-md font-title-lg text-title-lg font-bold text-azul">Llámanos</h2>
             <a href="tel:+51983033938" className="mt-space-xs block font-body-md text-body-md text-on-surface-variant hover:text-azul">+51 983 033 938</a>
           </div>
-          <div className="rounded-2xl border border-outline-variant/70 bg-surface-container-lowest p-space-xl shadow-sm">
-            <span className="material-symbols-outlined text-3xl text-azul">mail</span>
-            <h2 className="mt-space-md font-title-lg text-title-lg font-bold text-azul">Escríbenos</h2>
-            <a href="mailto:ventas@nucleocapital.pe" className="mt-space-xs block font-body-md text-body-md text-on-surface-variant hover:text-azul">ventas@nucleocapital.pe</a>
-          </div>
-        </div>
-
-        <div className="mt-space-xl rounded-2xl bg-azul p-space-xl text-center shadow-lg">
-          <h2 className="font-headline-sm text-headline-sm font-bold text-white">¿Quieres realizar una cotización?</h2>
-          <p className="mx-auto mt-space-xs max-w-xl font-body-md text-body-md text-white/80">Escríbenos por WhatsApp y te ayudaremos a elegir la mejor solución para tu empresa.</p>
-          <a
-            href="https://wa.me/51983033938?text=Hola%20Nucleo%20Capital%20SRL,%20quiero%20realizar%20una%20cotización"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-space-lg inline-flex items-center gap-space-xs rounded-full bg-[#25D366] px-space-xl py-space-sm font-label-md text-label-md font-bold text-white transition-colors hover:bg-[#20bd5a]"
-          >
-            <span className="material-symbols-outlined">chat</span>
-            Escribir por WhatsApp
-          </a>
         </div>
       </div>
     </div>

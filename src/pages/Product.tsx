@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, getDoc, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { mockProducts } from '../data/mockProducts';
 import type { Producto } from '../types/product';
@@ -29,12 +29,6 @@ const colorMap: Record<string, string> = {
   'Bambú Natural': 'bg-[#C4A35A]',
 };
 
-const crossSellProductIds = ['5', '10', '6', '9'];
-const crossSellProducts = crossSellProductIds.flatMap((productId) => {
-  const product = mockProducts.find(({ id }) => id === productId);
-  return product ? [product] : [];
-});
-
 const Product = () => {
   const { id } = useParams<{ id: string }>();
   const [producto, setProducto] = useState<Producto | null>(null);
@@ -42,6 +36,7 @@ const Product = () => {
   const [selectedColor, setSelectedColor] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isImageOpen, setIsImageOpen] = useState(false);
+  const [crossSellProducts, setCrossSellProducts] = useState<Producto[]>([]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -80,6 +75,42 @@ const Product = () => {
   }, [id]);
 
   useEffect(() => {
+    const fetchRelatedProducts = async () => {
+      try {
+        const snapshot = await getDocs(query(collection(db, 'productos'), where('activo', '==', true)));
+        const products = snapshot.docs
+          .filter((productDoc) => productDoc.id !== id)
+          .map((productDoc) => {
+            const data = productDoc.data();
+            return {
+              id: productDoc.id,
+              nombre: data.nombre,
+              descripcion: data.descripcion,
+              imagen: data.imagen,
+              categoria: data.categoria,
+              tipo: data.tipo,
+              activo: data.activo,
+              fechaCreacion: data.fechaCreacion?.toDate() || new Date(),
+              colores: data.colores || [],
+              material: data.material || '',
+              capacidad: data.capacidad,
+              badge: data.badge,
+            } as Producto;
+          })
+          .sort((a, b) => b.fechaCreacion.getTime() - a.fechaCreacion.getTime())
+          .slice(0, 4);
+
+        setCrossSellProducts(products.length > 0 ? products : mockProducts.filter((product) => product.id !== id).slice(0, 4));
+      } catch (error) {
+        console.error('Error al cargar productos relacionados:', error);
+        setCrossSellProducts(mockProducts.filter((product) => product.id !== id).slice(0, 4));
+      }
+    };
+
+    fetchRelatedProducts();
+  }, [id]);
+
+  useEffect(() => {
     if (!isImageOpen) return;
 
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -109,7 +140,7 @@ const Product = () => {
           <h2 className="font-headline-md text-headline-md text-azul font-bold mb-space-sm">Producto no encontrado</h2>
           <Link to="/tienda" className="inline-flex items-center gap-space-xs text-azul font-label-md text-label-md hover:underline">
             <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-            Volver al catálogo
+            Volver a productos
           </Link>
         </div>
       </div>
@@ -126,7 +157,7 @@ const Product = () => {
         <nav className="flex items-center gap-space-xs text-body-md text-on-surface-variant mb-space-lg overflow-x-auto pb-space-2xs whitespace-nowrap">
           <Link to="/tienda" className="flex items-center gap-1 hover:text-azul transition-colors font-medium">
             <span className="material-symbols-outlined text-base">arrow_back</span>
-            <span>Catálogo Merchandising</span>
+            <span>Productos de merchandising</span>
           </Link>
           <span className="material-symbols-outlined text-sm text-outline-variant">chevron_right</span>
           <span className="hover:text-azul transition-colors">{producto.categoria}</span>
@@ -269,24 +300,15 @@ const Product = () => {
               Ver todos los productos <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
-             {crossSellProducts.map((p) => (
-              <div key={p.id} className="bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
-                <div className="aspect-square rounded-lg overflow-hidden bg-surface-container-low mb-space-sm">
-                   <img src={p.imagen} alt={p.nombre} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                </div>
-                <div>
-                   <span className="font-label-sm text-label-sm text-outline">{p.categoria}</span>
-                   <h4 className="font-title-lg text-title-lg text-azul text-base">{p.nombre}</h4>
-                   <p className="font-label-sm text-on-surface-variant text-[12px] mb-2">{p.descripcion}</p>
-                  <div className="flex items-baseline justify-between pt-space-xs border-t border-outline-variant/30">
-                    <button className="text-azul hover:text-azul-dark font-label-sm text-label-sm font-semibold flex items-center gap-0.5">
-                      <span className="material-symbols-outlined text-sm">add_circle</span> Añadir al Pack
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="flex snap-x snap-mandatory gap-space-lg overflow-x-auto pb-space-sm">
+             {crossSellProducts.map((p, index) => (
+               <motion.article key={p.id} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: index * 0.06 }} viewport={{ once: true }} className="group flex w-[85%] flex-none snap-start flex-col overflow-hidden rounded-xl border border-outline-variant/70 bg-surface-container-lowest shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg sm:w-[48%] lg:w-[calc((100%-4.5rem)/4)]">
+                 <Link to={`/producto/${p.id}`} className="flex h-full flex-col">
+                   <div className="relative aspect-square overflow-hidden bg-surface-container-low"><img src={p.imagen} alt={p.nombre} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />{p.badge && <span className="absolute left-space-sm top-space-sm rounded-full bg-azul px-space-sm py-1 font-label-sm text-label-sm font-bold text-white">{p.badge}</span>}</div>
+                   <div className="flex flex-1 flex-col p-space-md"><span className="font-label-sm text-label-sm font-bold uppercase tracking-wider text-outline">{p.categoria}</span><h3 className="mt-space-2xs font-title-lg text-title-lg font-bold leading-tight text-azul">{p.nombre}</h3><p className="mt-space-xs line-clamp-3 font-body-sm text-body-sm text-on-surface-variant">{p.descripcion}</p><span className="mt-auto flex items-center gap-1 pt-space-md font-label-md text-label-md font-bold text-azul">Ver producto <span className="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">arrow_forward</span></span></div>
+                 </Link>
+               </motion.article>
+             ))}
           </div>
         </div>
 

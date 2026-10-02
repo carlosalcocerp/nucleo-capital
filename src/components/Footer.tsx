@@ -20,9 +20,9 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Catálogo */}
+          {/* Productos */}
           <div className="flex flex-col gap-space-sm">
-            <span className="font-title-lg text-title-lg text-azul">Catálogo Corporativo</span>
+            <span className="font-title-lg text-title-lg text-azul">Productos Corporativos</span>
             {['Línea Ejecutiva & Escritorio', 'Textilería Corporativa & EPP', 'Tecnología & Gadgets Premium', 'Drinkware & Botellas Térmicas', 'Kits de Bienvenida & Onboarding'].map((item) => (
               <a key={item} href="/tienda" className="font-body-md text-body-md text-on-surface-variant hover:text-azul transition-colors">{item}</a>
             ))}

@@ -19,40 +19,15 @@ const PRODUCT_CATEGORIES = [
   "USB's - Accesorios de Celular",
 ] as const;
 
-const colorMap: Record<string, string> = {
-  'Negro Mate': 'bg-[#1A1A1A]',
-  'Esmeralda': 'bg-[#003220]',
-  'Azul Marino': 'bg-[#0F2E3D]',
-  'Marfil': 'bg-[#F4EFE2]',
-  'Blanco Clásico': 'bg-[#FFFFFF]',
-  'Arena Sillar': 'bg-[#D4C5A9]',
-  'Transparente': 'bg-[#E5E7EB]',
-  'Ahumado': 'bg-[#6B7280]',
-  'Azul Cielo': 'bg-[#38BDF8]',
-  'Rojo': 'bg-[#EF4444]',
-  'Negro': 'bg-[#1A1A1A]',
-  'Plata': 'bg-[#9CA3AF]',
-  'Negro Ejecutivo': 'bg-[#1A1A1A]',
-  'Café Cognac': 'bg-[#92400E]',
-  'Verde Bosque': 'bg-[#065F46]',
-  'Blanco': 'bg-[#FFFFFF]',
-  'Gris': 'bg-[#6B7280]',
-  'Crudo Natural': 'bg-[#F5F0E0]',
-  'Negro Orgánico': 'bg-[#1A1A1A]',
-  'Gris Carbón': 'bg-[#374151]',
-  'Azul Deep Sea': 'bg-[#0F2E3D]',
-  'Obsidiana Gold': 'bg-[#1A1A1A]',
-  'Esmeralda Imperial': 'bg-[#003220]',
-};
-
 const Store = () => {
+  const PRODUCTS_PER_PAGE = 21;
   const [productos, setProductos] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -107,12 +82,6 @@ const Store = () => {
     }));
   }, [productos]);
 
-  const allColors = useMemo(() => {
-    const colors = new Set<string>();
-    productos.forEach((p) => p.colores.forEach((c) => colors.add(c)));
-    return [...colors];
-  }, [productos]);
-
   const toggleCategory = (cat: string) => {
     setSelectedCategories((prev) =>
       prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
@@ -125,35 +94,41 @@ const Store = () => {
     );
   };
 
-  const toggleColor = (color: string) => {
-    setSelectedColors((prev) =>
-      prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]
-    );
-  };
-
   const clearFilters = () => {
     setSelectedCategories([]);
     setSelectedTypes([]);
-    setSelectedColors([]);
     setSearchTerm('');
   };
 
-  const hasActiveFilters = selectedCategories.length > 0 || selectedTypes.length > 0 || selectedColors.length > 0 || searchTerm;
+  const hasActiveFilters = selectedCategories.length > 0 || selectedTypes.length > 0 || searchTerm;
 
   const filteredProducts = productos.filter((p) => {
     if (selectedCategories.length > 0 && !selectedCategories.includes(p.categoria)) return false;
     if (selectedTypes.length > 0 && !selectedTypes.includes(p.tipo)) return false;
-    if (selectedColors.length > 0 && !p.colores.some((c) => selectedColors.includes(c))) return false;
     if (searchTerm && !p.nombre.toLowerCase().includes(searchTerm.toLowerCase()) && !p.descripcion.toLowerCase().includes(searchTerm.toLowerCase())) return false;
     return true;
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategories, selectedTypes]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE));
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * PRODUCTS_PER_PAGE,
+    currentPage * PRODUCTS_PER_PAGE,
+  );
+
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages);
+  }, [currentPage, totalPages]);
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-crema">
         <div className="flex items-center gap-space-sm">
           <span className="material-symbols-outlined text-azul animate-spin">refresh</span>
-          <span className="font-body-lg text-body-lg text-on-surface-variant">Cargando catálogo...</span>
+          <span className="font-body-lg text-body-lg text-on-surface-variant">Cargando productos...</span>
         </div>
       </div>
     );
@@ -171,7 +146,7 @@ const Store = () => {
               TALLER DE PRECISIÓN YANAHUARA • AREQUIPA 2025
             </div>
             <h1 className="font-display text-headline-lg lg:text-display text-azul tracking-tight">
-              Catálogo de Merchandising & Productos Corporativos
+              Productos de Merchandising & Corporativos
             </h1>
             <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed max-w-3xl">
               Personalización institucional con grabado láser 360°, serigrafía al tacto, bordado fino en relieve y acabados de lujo ejecutados directamente en nuestro taller propio en Arequipa.
@@ -250,12 +225,6 @@ const Store = () => {
                       <span className="material-symbols-outlined text-xs cursor-pointer" onClick={() => toggleType(type)}>close</span>
                     </span>
                   ))}
-                  {selectedColors.map((color) => (
-                    <span key={color} className="inline-flex items-center gap-1 bg-azul/10 text-azul px-2 py-1 rounded-md font-label-sm text-label-sm">
-                      {color}
-                      <span className="material-symbols-outlined text-xs cursor-pointer" onClick={() => toggleColor(color)}>close</span>
-                    </span>
-                  ))}
                 </div>
               )}
 
@@ -301,27 +270,6 @@ const Store = () => {
                 </div>
               </div>
 
-              {/* Colors */}
-              <div className="flex flex-col gap-space-xs">
-                <span className="font-label-md text-label-md text-azul font-bold tracking-wide uppercase">Colores</span>
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {allColors.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => toggleColor(color)}
-                      className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all ${
-                        selectedColors.includes(color)
-                          ? 'border-azul bg-azul/10 text-azul'
-                          : 'border-outline-variant/50 bg-surface-container-lowest text-on-surface-variant hover:border-azul/50'
-                      }`}
-                    >
-                      <span className={`w-3.5 h-3.5 rounded-full ${colorMap[color] || 'bg-gray-400'} shadow-sm border border-outline-variant/30`}></span>
-                      <span className="font-label-sm text-label-sm">{color}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* Help Card */}
               <div className="bg-surface-container p-space-md rounded-xl flex flex-col gap-space-xs mt-space-xs">
                 <div className="flex items-center gap-1.5 text-azul">
@@ -357,62 +305,68 @@ const Store = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-space-lg">
-                {filteredProducts.map((producto, index) => (
-                  <motion.div
+                {paginatedProducts.map((producto, index) => (
+                  <motion.article
                     key={producto.id}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: index * 0.05 }}
                   >
-                    <div className="block bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group">
-                      <div className="relative w-full h-52 bg-surface-container-low overflow-hidden">
-                        <img src={producto.imagen} alt={producto.nombre} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="group flex h-full flex-col overflow-hidden rounded-xl border border-outline-variant/70 bg-surface-container-lowest shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg">
+                      <Link to={`/producto/${producto.id}`} className="flex h-full flex-col">
+                      <div className="relative aspect-square overflow-hidden bg-surface-container-low">
+                        <img src={producto.imagen} alt={producto.nombre} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                         {producto.badge && (
-                          <span className="absolute top-3 left-3 bg-azul text-white px-space-xs py-0.5 rounded-full font-label-sm text-label-sm font-bold shadow-sm">
+                          <span className="absolute left-space-sm top-space-sm rounded-full bg-azul px-space-sm py-1 font-label-sm text-label-sm font-bold text-white">
                             {producto.badge}
                           </span>
                         )}
                       </div>
-                      <div className="p-space-md flex flex-col gap-space-xs">
-                        <div className="flex items-center justify-between">
-                          <span className="font-label-sm text-label-sm text-azul uppercase font-bold tracking-wider">{producto.categoria}</span>
-                          <span className="font-label-sm text-label-sm text-outline">{producto.tipo}</span>
-                        </div>
-                        <h3 className="font-title-lg text-title-lg text-azul group-hover:text-azul-dark transition-colors leading-snug">{producto.nombre}</h3>
-                        <p className="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">{producto.descripcion}</p>
-                        <div className="flex items-center gap-1 flex-wrap">
-                          {producto.colores.length > 0 && (
-                            <div className="flex items-center gap-0.5 ml-auto">
-                              {producto.colores.slice(0, 3).map((c, i) => (
-                                <span key={i} className={`w-3 h-3 rounded-full ${colorMap[c] || 'bg-gray-400'} shadow-sm border border-white`}></span>
-                              ))}
-                              {producto.colores.length > 3 && (
-                                <span className="font-label-sm text-[10px] text-outline ml-0.5">+{producto.colores.length - 3}</span>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                         <div className="pt-space-xs flex items-center gap-space-xs border-t border-outline-variant/30">
-                           <Link
-                             to={`/producto/${producto.id}`}
-                             className="flex-1 text-center bg-azul text-white px-space-sm py-2 rounded-lg font-label-md text-label-md font-semibold hover:bg-azul-dark hover:scale-[1.02] active:scale-95 transition-all animate-[bounce_2s_ease-in-out_infinite] text-xs"
-                           >
-                             Ver detalle
-                           </Link>
-                           <a
-                             href={`https://wa.me/51983033938?text=${encodeURIComponent(`Hola, deseo consultar por ${producto.nombre}.`)}`}
-                             target="_blank"
-                             rel="noopener noreferrer"
-                             className="flex-1 text-center border border-azul text-azul px-space-sm py-2 rounded-lg font-label-md text-label-md font-semibold hover:bg-azul hover:text-white hover:scale-[1.02] active:scale-95 transition-all animate-[bounce_2s_ease-in-out_infinite] text-xs"
-                           >
-                             Consultar
-                           </a>
-                         </div>
-                       </div>
+                      <div className="flex flex-1 flex-col p-space-md">
+                        <span className="font-label-sm text-label-sm font-bold uppercase tracking-wider text-outline">{producto.categoria}</span>
+                        <h3 className="mt-space-2xs font-title-lg text-title-lg font-bold leading-tight text-azul">{producto.nombre}</h3>
+                        <p className="mt-space-xs line-clamp-2 font-body-sm text-body-sm text-on-surface-variant">{producto.descripcion}</p>
+                        <span className="mt-space-lg inline-flex w-fit animate-[pulse_3s_ease-in-out_infinite] items-center justify-center gap-1 rounded-lg bg-azul px-space-lg py-2.5 font-label-md text-label-md font-bold text-white shadow-sm transition-all group-hover:bg-azul-dark group-hover:shadow-md">Ver producto <span className="material-symbols-outlined text-[16px] transition-transform group-hover:translate-x-0.5">arrow_forward</span></span>
+                      </div>
+                      </Link>
                     </div>
-                  </motion.div>
+                  </motion.article>
                 ))}
               </div>
+            )}
+
+            {filteredProducts.length > PRODUCTS_PER_PAGE && (
+              <nav className="flex flex-wrap items-center justify-center gap-2 pt-space-md" aria-label="Paginación de productos">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                  disabled={currentPage === 1}
+                  className="inline-flex h-10 items-center gap-1 rounded-lg border border-outline-variant bg-surface-container-lowest px-space-sm font-label-md text-label-md font-bold text-azul transition hover:bg-azul hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <span className="material-symbols-outlined text-[18px]">chevron_left</span>
+                  Anterior
+                </button>
+                {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                  <button
+                    key={page}
+                    type="button"
+                    onClick={() => setCurrentPage(page)}
+                    aria-current={currentPage === page ? 'page' : undefined}
+                    className={`h-10 min-w-10 rounded-lg px-3 font-label-md text-label-md font-bold transition ${currentPage === page ? 'bg-azul text-white shadow-sm' : 'border border-outline-variant bg-surface-container-lowest text-azul hover:bg-azul/10'}`}
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                  disabled={currentPage === totalPages}
+                  className="inline-flex h-10 items-center gap-1 rounded-lg border border-outline-variant bg-surface-container-lowest px-space-sm font-label-md text-label-md font-bold text-azul transition hover:bg-azul hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Siguiente
+                  <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+                </button>
+              </nav>
             )}
           </section>
         </div>
