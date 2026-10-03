@@ -78,6 +78,7 @@ export default {
         'headline-sm': ['Manrope', 'sans-serif'],
         'headline-lg': ['Manrope', 'sans-serif'],
         'headline-lg-mobile': ['Manrope', 'sans-serif'],
+        'impact': ['Impact', 'Haettenschweiler', 'sans-serif'],
         'title-lg': ['Manrope', 'sans-serif'],
         'title-md': ['Manrope', 'sans-serif'],
         'body-lg': ['Manrope', 'sans-serif'],

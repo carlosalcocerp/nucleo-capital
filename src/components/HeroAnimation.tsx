@@ -1,9 +1,29 @@
 import { useEffect, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 
 const videoUrl = 'https://www.youtube.com/embed/I_XM2wXaqb4';
+const heroHeadlineLead = '¿TU EMPRESA O NEGOCIO';
+const heroHeadlineFollowUp = 'ESTÁ LISTA PARA DAR EL SIGUIENTE PASO?';
+const heroSubheadline = 'ESTRATEGIA, DISEÑO Y PRODUCCIÓN QUE DESTACAN';
+const typewriterDelay = 0.06;
 
 const HeroAnimation = () => {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
+  const renderTypedText = (text: string, startIndex: number) => Array.from(text).map((character, index) => (
+    <motion.span
+      key={`${startIndex + index}-${character}`}
+      initial={prefersReducedMotion ? false : { opacity: 0, filter: 'blur(6px)' }}
+      animate={{ opacity: 1, filter: 'blur(0px)' }}
+      transition={{
+        duration: prefersReducedMotion ? 0 : 0.18,
+        delay: prefersReducedMotion ? 0 : (startIndex + index) * typewriterDelay,
+        ease: 'linear',
+      }}
+    >
+      {character}
+    </motion.span>
+  ));
 
   useEffect(() => {
     if (!isVideoOpen) return;
@@ -37,16 +57,35 @@ const HeroAnimation = () => {
         aria-label="Abrir video de presentación de Nucleo Capital SRL"
       ></button>
 
-      <div className="relative z-30 flex min-h-[calc(100svh-5rem)] items-center justify-center px-gutter-mobile text-center lg:px-gutter-desktop">
-        <div className="max-w-6xl">
-          <p className="mb-space-md font-label-sm text-label-sm font-bold uppercase tracking-[0.35em] text-white/90">
-            Taller &amp; Estudio Creativo
-          </p>
-          <h1 className="font-headline-lg text-headline-lg font-black uppercase tracking-[-0.05em] text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.35)] sm:text-7xl md:text-9xl">
-            NUCLEO CAPITAL SRL
+      <div className="relative z-30 flex min-h-[calc(100svh-5rem)] items-center justify-start px-space-lg sm:px-space-xl lg:px-space-3xl">
+        <motion.div
+          className="w-full max-w-5xl text-left"
+          initial={prefersReducedMotion ? false : { opacity: 0, y: -28, scale: 0.96 }}
+          animate={prefersReducedMotion
+            ? { opacity: 1, y: 0, scale: 1 }
+            : { opacity: [0, 1, 1, 0], y: [-28, 0, 0, 12], scale: [0.96, 1, 1.04, 1.04] }}
+          transition={prefersReducedMotion
+            ? { duration: 0 }
+            : { duration: 13, times: [0, 0.2, 0.78, 1], delay: 0.2, repeat: Infinity, repeatDelay: 0.8, ease: 'easeInOut' }}
+        >
+          <h1
+            aria-label={`${heroHeadlineLead} ${heroHeadlineFollowUp}`}
+            className="font-headline-lg font-black uppercase leading-tight text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.35)]"
+          >
+            <span aria-hidden="true" className="block font-impact text-5xl leading-[1.02] sm:text-7xl md:text-8xl">
+              {renderTypedText(heroHeadlineLead, 0)}
+            </span>
+            <span aria-hidden="true" className="mt-space-lg block text-3xl sm:text-5xl md:text-6xl">
+              {renderTypedText(heroHeadlineFollowUp, heroHeadlineLead.length)}
+              <span className="ml-1 inline-block h-[0.9em] w-[3px] animate-pulse bg-white align-baseline motion-reduce:animate-none" />
+            </span>
           </h1>
-          <div className="mx-auto mt-space-lg h-1 w-24 rounded-full bg-gradient-to-r from-[#0057a4] to-[#75b847] shadow-lg" aria-hidden="true"></div>
-        </div>
+          <p aria-label={heroSubheadline} className="mt-space-xl max-w-3xl font-label-md text-sm font-bold uppercase leading-relaxed tracking-[0.1em] text-white/90 sm:text-base md:text-lg">
+            <span aria-hidden="true">
+              {renderTypedText(heroSubheadline, heroHeadlineLead.length + heroHeadlineFollowUp.length)}
+            </span>
+          </p>
+        </motion.div>
       </div>
 
       {isVideoOpen && (
