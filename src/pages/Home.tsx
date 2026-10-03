@@ -332,21 +332,21 @@ const Home = () => {
       <section className="w-full border-y border-white/10 bg-azul py-space-2xl" aria-labelledby="marcas-heading">
         <div className="max-w-[1280px] mx-auto px-gutter-mobile lg:px-gutter-desktop">
           <div className="mb-space-lg text-center">
-            <h2 id="marcas-heading" className="mt-space-2xs flex flex-wrap items-center justify-center gap-space-md font-headline-lg text-headline-lg text-crema">
+            <h2 id="marcas-heading" className="mt-space-2xs flex flex-wrap items-center justify-center gap-space-md font-headline-lg text-[44px] leading-tight text-crema sm:text-[52px]">
               <span className="font-black uppercase">Confían</span>
               <span className="font-normal normal-case">EN NÚCLEO</span>
             </h2>
           </div>
-          <div className="grid grid-cols-2 gap-space-lg sm:grid-cols-3 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-0 sm:grid-cols-3 sm:gap-space-2xs lg:grid-cols-5 lg:gap-space-xs">
             {logosVisibles.map((logo, index) => (
               <motion.div
                 key={`${paginaLogos}-${logo.path}`}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: index * 0.04 }}
-                className="flex min-h-32 items-center justify-center px-space-sm"
+                className={`flex min-h-40 items-center justify-center ${index >= 6 ? 'hidden sm:flex' : ''}`}
               >
-                <img src={logo.src} alt={logo.alt} className="h-auto max-h-24 w-full max-w-[320px] object-contain" />
+                <img src={logo.src} alt={logo.alt} className="h-auto max-h-40 w-full max-w-[360px] object-contain" />
               </motion.div>
             ))}
           </div>
